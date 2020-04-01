@@ -62,6 +62,7 @@ export default function CourseInfo(props) {
     const handleIcChange = (e,v) => {
         setCourseInfo({...courseInfo,ic:v.psrn_or_id});
     }
+    const defaultIC = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.ic);
     return (
         <Card className={classes.root}>
         <CardContent style={styles.card_content}>
@@ -81,7 +82,7 @@ export default function CourseInfo(props) {
                 options={props.state.faculty_list}
                 getOptionLabel={option => option.name}
                 style={styles.text_field}
-                value={props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.ic)}
+                defaultValue={defaultIC}
                 label="IC"
                 required={true}
                 renderInput={params =>  <TextField style={{...styles.text_field,width: '100%'}} {...params} label={'IC'} />}
