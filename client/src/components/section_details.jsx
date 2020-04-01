@@ -77,6 +77,7 @@ export default function CourseInfo(props) {
                 options={data}
                 key={data[no].name}
                 getOptionLabel={option => option.name}
+                defaultValue={data[i]}
                 style={{ width: '80%', margin: 'auto' }}
                 renderInput={params => <TextField style={classes.text_field} {...params} label={`${type} ${no+1}`} />}
                 onChange={(e,v) => handleInfoChange(e,v,type,no)}
