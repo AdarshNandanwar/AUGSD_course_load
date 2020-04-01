@@ -140,9 +140,9 @@ export default function SimpleTabs(props) {
       props.setCourseInfo({...props.courseInfo,course_type,course_code:course.code});
 
       const res = await axios.post('/course-load/get-course-data/',{course_type,course_code:course.code});
-      const l = res.data.data.l.map(course = course.psrn_or_id);
-      const t = res.data.data.t.map(course = course.psrn_or_id);
-      const p = res.data.data.p.map(course = course.psrn_or_id);
+      const l = res.data.data.l.map(course => course.psrn_or_id);
+      const t = res.data.data.t.map(course => course.psrn_or_id);
+      const p = res.data.data.p.map(course => course.psrn_or_id);
       const ic = res.data.data.ic.psrn_or_id;
       await props.setCourseInfo({...props.courseInfo,...res.data.data,l,t,p,ic });
       console.log(props.courseInfo);
