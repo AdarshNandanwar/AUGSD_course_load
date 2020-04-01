@@ -73,11 +73,19 @@ export default function CourseInfo(props) {
     }
 
     const getAutoCompleteComp = (data,type,no) => {
+        let defaultValue;
+        if(type === "Lecture")
+        defaultValue = props.courseInfo.l[no];
+        else if(type === "Tutorial")
+        defaultValue = props.courseInfo.t[no];
+        else
+        defaultValue = props.courseInfo.p[no];
+
         return (<Autocomplete
                 options={data}
                 key={data[no].name}
                 getOptionLabel={option => option.name}
-                defaultValue={data[no]}
+                defaultValue={defaultValue}
                 style={{ width: '80%', margin: 'auto' }}
                 renderInput={params => <TextField style={classes.text_field} {...params} label={`${type} ${no+1}`} />}
                 onChange={(e,v) => handleInfoChange(e,v,type,no)}
