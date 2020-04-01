@@ -123,7 +123,7 @@ export default function CourseInfo(props) {
         <Card className={classes.root}>
         <CardContent style={styles.card_content}>
             <Typography variant="h5" className={classes.heading} >
-                Sections Info {props.selectedCourse ? `of ${props.selectedCourse}` : null}
+                Faculty Info {props.selectedCourse ? `of ${props.selectedCourse}` : null}
             </Typography>
         </CardContent>
         <CardContent style={styles.card_content}>
