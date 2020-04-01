@@ -141,7 +141,7 @@ export default function SimpleTabs(props) {
 
       const res = await axios.post('/course-load/get-course-data/',{course_type,course_code:course.code});
       await props.setCourseInfo({...props.courseInfo,...res.data});
-      console.log(courseInfo);
+      console.log(props.courseInfo);
       console.log(res.data);
   }
 
