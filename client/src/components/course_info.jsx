@@ -81,7 +81,7 @@ export default function CourseInfo(props) {
                 options={props.state.faculty_list}
                 getOptionLabel={option => option.name}
                 style={styles.text_field}
-                defaultValue={props.courseInfo.ic}
+                value={props.courseInfo.ic}
                 label="IC"
                 required={true}
                 renderInput={params =>  <TextField style={{...styles.text_field,width: '100%'}} {...params} label={'IC'} />}
