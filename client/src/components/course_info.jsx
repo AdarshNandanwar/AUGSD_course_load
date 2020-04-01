@@ -54,7 +54,6 @@ export default function CourseInfo(props) {
     const setCourseInfo = props.setCourseInfo;
 
     const handleInfoChange = (e) => {
-        console.log(courseInfo);
         const name = e.target.name;
         const value = e.target.value;
         setCourseInfo({...courseInfo,[name]: value});
@@ -63,6 +62,8 @@ export default function CourseInfo(props) {
         setCourseInfo({...courseInfo,ic:v.psrn_or_id});
     }
     const defaultIC = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.ic);
+    console.log(defaultIC);
+    console.log(courseInfo);
     return (
         <Card className={classes.root}>
         <CardContent style={styles.card_content}>
