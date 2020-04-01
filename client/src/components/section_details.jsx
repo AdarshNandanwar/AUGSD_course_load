@@ -67,9 +67,11 @@ export default function CourseInfo(props) {
         type_symbol = 't';
         else
         type_symbol = 'p';
-        let newCourseInfo = courseInfo;
-        newCourseInfo[type_symbol][no] = v.psrn_or_id;
-        setCourseInfo(newCourseInfo);
+        if(v){
+            let newCourseInfo = courseInfo;
+            newCourseInfo[type_symbol][no] = v.psrn_or_id;
+            setCourseInfo(newCourseInfo);
+        }
     }
 
     const getAutoCompleteComp = (data,type,no) => {
@@ -85,7 +87,7 @@ export default function CourseInfo(props) {
                 options={data}
                 key={data[no].name}
                 getOptionLabel={option => `${option.name} (${option.psrn_or_id})`}
-                value={defaultValue}
+                defaultValue={defaultValue}
                 style={{ width: '80%', margin: 'auto' }}
                 renderInput={params => <TextField style={classes.text_field} {...params} label={`${type} ${no+1}`} />}
                 onChange={(e,v) => handleInfoChange(e,v,type,no)}

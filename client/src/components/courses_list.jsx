@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
+import courseInfo from './course_info_data';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -139,7 +140,9 @@ export default function SimpleTabs(props) {
       course_type = 'E'
       props.setCourseInfo({...props.courseInfo,course_type,course_code:course.code});
 
-      const res = await axios.post('/course-load/get-course-data/',{course_type,course_code:course.code});
+      // const res = await axios.post('/course-load/get-course-data/',{course_type,course_code:course.code});
+      const res = {}
+      res.data = courseInfo;
       const l = res.data.data.l.map(course => course.psrn_or_id);
       const t = res.data.data.t.map(course => course.psrn_or_id);
       const p = res.data.data.p.map(course => course.psrn_or_id);

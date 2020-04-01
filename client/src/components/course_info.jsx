@@ -59,11 +59,11 @@ export default function CourseInfo(props) {
         setCourseInfo({...courseInfo,[name]: value});
     }
     const handleIcChange = (e,v) => {
+       if (v)
         setCourseInfo({...courseInfo,ic:v.psrn_or_id});
     }
     const defaultIC = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.ic);
-    console.log(defaultIC);
-    console.log(courseInfo);
+
     return (
         <Card className={classes.root}>
         <CardContent style={styles.card_content}>
@@ -83,7 +83,8 @@ export default function CourseInfo(props) {
                 options={props.state.faculty_list}
                 getOptionLabel={option => option.name}
                 style={styles.text_field}
-                value={defaultIC}
+                value={defaultIC || {name:''}}
+                label="IC"
                 required={true}
                 renderInput={params =>  <TextField style={{...styles.text_field,width: '100%'}} {...params} label={'IC'} />}
                 onChange={(event,value) => handleIcChange(event,value)}
