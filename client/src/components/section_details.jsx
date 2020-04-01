@@ -84,7 +84,7 @@ export default function CourseInfo(props) {
         return (<Autocomplete
                 options={data}
                 key={data[no].name}
-                getOptionLabel={option => option.name}
+                getOptionLabel={option => `${option.name} (${option.psrn_or_id})`}
                 value={defaultValue}
                 style={{ width: '80%', margin: 'auto' }}
                 renderInput={params => <TextField style={classes.text_field} {...params} label={`${type} ${no+1}`} />}

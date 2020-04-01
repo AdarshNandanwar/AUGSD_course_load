@@ -84,7 +84,6 @@ export default function CourseInfo(props) {
                 getOptionLabel={option => option.name}
                 style={styles.text_field}
                 value={defaultIC}
-                label="IC"
                 required={true}
                 renderInput={params =>  <TextField style={{...styles.text_field,width: '100%'}} {...params} label={'IC'} />}
                 onChange={(event,value) => handleIcChange(event,value)}
