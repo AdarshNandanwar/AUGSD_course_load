@@ -75,17 +75,16 @@ export default function CourseInfo(props) {
     const getAutoCompleteComp = (data,type,no) => {
         let defaultValue;
         if(type === "Lecture")
-        defaultValue = props.courseInfo.l[no];
+        defaultValue = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.l[no]);
         else if(type === "Tutorial")
-        defaultValue = props.courseInfo.t[no];
+        defaultValue = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.t[no]);
         else
-        defaultValue = props.courseInfo.p[no];
+        defaultValue = props.state.faculty_list.find(faculty => faculty.psrn_or_id == props.courseInfo.p[no]);
 
         return (<Autocomplete
                 options={data}
                 key={data[no].name}
                 getOptionLabel={option => option.name}
-                v
                 value={defaultValue}
                 style={{ width: '80%', margin: 'auto' }}
                 renderInput={params => <TextField style={classes.text_field} {...params} label={`${type} ${no+1}`} />}
