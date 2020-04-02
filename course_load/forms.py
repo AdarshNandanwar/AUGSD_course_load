@@ -14,8 +14,8 @@ class AddCourseForm(forms.ModelForm):
         model = Course  
         fields = ['code', 'name', 'department', 'course_type']
         labels = {
-            'code': 'Course code',
-            'code': 'Course name'
+            'code': 'Course number',
+            'name': 'Course title'
         }
 
 class AddInstructorForm(forms.ModelForm):
@@ -31,14 +31,30 @@ class UpdateCourseForm(forms.ModelForm):
         model = Course  
         fields = ['code', 'name', 'department', 'course_type']
         labels = {
-            'code': 'Course code',
-            'code': 'Course name'
+            'code': 'Course number',
+            'name': 'Course title'
         }
 
 class UpdateInstructorForm(forms.ModelForm):
     class Meta:  
         model = Instructor  
         fields = ['psrn_or_id', 'name', 'department', 'instructor_type']
+        labels = {
+            'psrn_or_id': 'PSRN/ID'
+        }
+
+class DeleteCourseForm(forms.ModelForm):
+    class Meta:  
+        model = Course  
+        fields = ['code']
+        labels = {
+            'code': 'Course number',
+        }
+
+class DeleteInstructorForm(forms.ModelForm):
+    class Meta:  
+        model = Instructor  
+        fields = ['psrn_or_id']
         labels = {
             'psrn_or_id': 'PSRN/ID'
         }

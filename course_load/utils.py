@@ -1,7 +1,7 @@
 # This file contains utility functions for course_load
 
 import itertools
-
+import math
 import pandas as pd
 import numpy as np
 from pandas import ExcelWriter
@@ -18,8 +18,14 @@ def get_department_cdc_list(dept):
     Lst=[]
     for i in range(1, df.shape[0]+1):
         if(df['dept'][i]==dept):
-            Lst.append([df['course no'][i],df['course title'][i]])
-
+            Lst.append([
+                df['course no'][i],
+                df['course title'][i],
+                0 if math.isnan(df['L'][i]) else df['L'][i],
+                0 if math.isnan(df['T'][i]) else df['T'][i],
+                0 if math.isnan(df['P'][i]) else df['P'][i],
+            ])
+            
     return Lst
 
 def get_department_elective_list(dept):

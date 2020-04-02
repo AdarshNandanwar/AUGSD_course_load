@@ -41,8 +41,9 @@ class Course(models.Model):
     l_count = models.IntegerField(default=0)
     t_count = models.IntegerField(default=0)
     p_count = models.IntegerField(default=0)
-    student_count = models.IntegerField(default=0)
-    max_strength = models.IntegerField(default=0)
+    max_strength_per_l = models.IntegerField(default=0)
+    max_strength_per_t = models.IntegerField(default=0)
+    max_strength_per_p = models.IntegerField(default=0)
     ic = models.ForeignKey(Instructor, default=None, on_delete=models.CASCADE, null = True)
     department = models.ForeignKey(Department, default=None, on_delete=models.CASCADE)
     COURSE_TYPES = (
@@ -65,11 +66,6 @@ class CourseInstructor(models.Model):
         ('I', 'Independent'),
     )
     section_type = models.CharField(max_length=1, choices=SECTION_TYPES, null = False)
-    # COURSE_TYPES = (
-    #     ('C', 'CDC'),
-    #     ('E', 'Elective')
-    # )
-    # course_type = models.CharField(max_length=1, choices=COURSE_TYPES, null = False)
     course = models.ForeignKey(Course, default=None, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, default=None, on_delete=models.CASCADE)
 

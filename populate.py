@@ -73,7 +73,7 @@ def create_course():
             for cdc in department_cdc_list:
                 print(cdc[0], ', ', cdc[1])
                 try:
-                    Course.objects.create(code = cdc[0], name = cdc[1], course_type = 'C', department = dept)
+                    Course.objects.create(code = cdc[0], name = cdc[1], course_type = 'C', department = dept, l_count = cdc[2], t_count = cdc[3], p_count = cdc[4])
                 except Exception as e:
                     print(cdc[0], ', ', cdc[1], " skipped as this cdc is already in db")
                 

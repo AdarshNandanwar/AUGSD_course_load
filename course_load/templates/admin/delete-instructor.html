@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="en">
 <head>
-	<title>Dashboard: Comment</title>
+	<title>Delete Instructor</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -15,7 +15,8 @@
 <!--===============================================================================================-->
 </head>
 <body>
-
+	{% load crispy_forms_tags %}
+	
     <nav class="navbar navbar-light bg-light " style = "position: fixed; top:0; width:100%;">
         <a class="nav-link ml-auto" href="/accounts/logout">Logout</a>
     </nav>
@@ -27,15 +28,41 @@
 					<a href="/course-load/dashboard">Back</a>
 				</div>
 				<div class="text-center">
-					<h3>Upload Comment File</h3>
-					<form class="m-5" action="/course-load/add-comment/" method="post" enctype='multipart/form-data'>
-						{% csrf_token %}
-						<div class="text-danger">One file per user</div>
-						<div class="m-3">
-							{{ form.comment_file }}
-						</div>
-						<input class="btn btn-dark" type="submit" value="Submit">
-					</form>
+					<h1>Delete Instructor</h1> 
+					<div class="col-8" style="margin: auto;">
+						<form class="m-5" action="/delete-instructor/" method="post">
+							{% csrf_token %}
+							{{form|crispy}}
+							<div id="div_id_old_name" class="form-group">
+								<label for="id_old_name" class=" requiredField">
+									Instructor title
+									<span class="asteriskField">*</span>
+								</label>
+								<div class="">
+									<input readonly type="text" name="old_name" maxlength="10" class="textinput textInput form-control" required="" id="id_old_name">
+								</div>
+							</div>
+							<div id="div_id_old_department" class="form-group">
+								<label for="id_old_department" class=" requiredField">
+									Department
+									<span class="asteriskField">*</span>
+								</label>
+								<div class="">
+									<input readonly type="text" name="old_department" maxlength="10" class="textinput textInput form-control" required="" id="id_old_department">
+								</div>
+							</div>
+							<div id="div_id_old_instructor_type" class="form-group">
+								<label for="id_old_instructor_type" class=" requiredField">
+									Instructor type
+									<span class="asteriskField">*</span>
+								</label>
+								<div class="">
+									<input readonly type="text" name="old_instructor_type" maxlength="10" class="textinput textInput form-control" required="" id="id_old_instructor_type">
+								</div>
+							</div>							
+							<input class="btn btn-dark" type="submit" value="Submit">
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -51,6 +78,27 @@
 	<script src="{% static 'registration/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <!--===============================================================================================-->
 	<script src="{% static 'registration/vendor/select2/select2.min.js' %}"></script>
+	<script>
+		$("#id_psrn_or_id").change(function () {
+			var psrn_or_id = $(this).val();
+			$.ajax({
+				url: '/get-instructor-preview/',
+				data: {
+					'psrn_or_id': psrn_or_id
+				},
+				dataType: 'json',
+				success: function (data) {
+					$("#id_old_name").val(data.name);
+					$("#id_old_department").val(data.department);
+					if(data.instructor_type == 'F'){
+						$("#id_old_instructor_type").val("Faculty");
+					} else if(data.instructor_type == 'S'){
+						$("#id_old_instructor_type").val("PHD Student");
+					}
+				}
+			});
+		});
+	</script>
 
 </body>
 </html>

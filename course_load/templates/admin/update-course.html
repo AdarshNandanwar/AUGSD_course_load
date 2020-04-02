@@ -29,21 +29,54 @@
 				</div>
 				<div class="text-center">
 					<h1>Update Course</h1> 
-					<div class="col-8" style="margin: auto;">
+					<div style="margin: auto;">
 						<form class="m-5" action="/update-course/" method="post">
 							{% csrf_token %}
-							<h5 class="m-2" style="font-weight: bold;">Old Information</h5>
-							<div id="div_id_old_code" class="form-group">
-								<label for="id_old_code" class=" requiredField">
-									Course code
-									<span class="asteriskField">*</span>
-								</label>
-								<div class="">
-									<input type="text" name="old_code" maxlength="10" class="textinput textInput form-control" required="" id="id_old_code">
+							<div class="row">
+								<div class="col-6">
+									<h5 class="m-2" style="font-weight: bold;">Old Information</h5>
+									<div id="div_id_old_code" class="form-group">
+										<label for="id_old_code" class=" requiredField">
+											Course number
+											<span class="asteriskField">*</span>
+										</label>
+										<div class="">
+											<input type="text" name="old_code" maxlength="10" class="textinput textInput form-control" required="" id="id_old_code">
+										</div>
+									</div>
+									<div id="div_id_old_name" class="form-group">
+										<label for="id_old_name" class=" requiredField">
+											Course title
+											<span class="asteriskField">*</span>
+										</label>
+										<div class="">
+											<input readonly type="text" name="old_name" maxlength="10" class="textinput textInput form-control" required="" id="id_old_name">
+										</div>
+									</div>
+									<div id="div_id_old_department" class="form-group">
+										<label for="id_old_department" class=" requiredField">
+											Department
+											<span class="asteriskField">*</span>
+										</label>
+										<div class="">
+											<input readonly type="text" name="old_department" maxlength="10" class="textinput textInput form-control" required="" id="id_old_department">
+										</div>
+									</div>
+									<div id="div_id_old_course_type" class="form-group">
+										<label for="id_old_course_type" class=" requiredField">
+											Course type
+											<span class="asteriskField">*</span>
+										</label>
+										<div class="">
+											<input readonly type="text" name="old_course_type" maxlength="10" class="textinput textInput form-control" required="" id="id_old_course_type">
+										</div>
+									</div>
+								</div>
+								<div class="col-6">
+									<h5 class="m-2" style="font-weight: bold;">New Information</h5>
+									{{form|crispy}}
 								</div>
 							</div>
-							<h5 class="m-2" style="font-weight: bold;">New Information</h5>
-							{{form|crispy}}
 							<input class="btn btn-dark" type="submit" value="Submit">
 						</form>
 					</div>
@@ -62,6 +95,28 @@
 	<script src="{% static 'registration/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <!--===============================================================================================-->
 	<script src="{% static 'registration/vendor/select2/select2.min.js' %}"></script>
+	<script>
+		$("#id_old_code").change(function () {
+			var course_code = $(this).val();
+			$.ajax({
+				url: '/get-course-preview/',
+				data: {
+					'course_code': course_code
+				},
+				dataType: 'json',
+				success: function (data) {
+					console.log(data.course_name);
+					$("#id_old_name").val(data.name);
+					$("#id_old_department").val(data.department);
+					if(data.course_type == 'C'){
+						$("#id_old_course_type").val("CDC");
+					} else if(data.course_type == 'E'){
+						$("#id_old_course_type").val("Elective");
+					}
+				}
+			});
+		});
+	</script>
 
 </body>
 </html>
