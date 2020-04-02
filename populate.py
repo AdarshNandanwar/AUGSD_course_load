@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AUGSD_time_table_project.settin
 import django
 
 django.setup()
-from course_load.models import UserProfile, Department, Course, Instructor, CourseAccessRequested
+from course_load.models import *
 from course_load.utils import get_department_list, get_department_cdc_list, get_department_elective_list, get_department_instructor_list, get_department_phd_student_list
 
 from django.contrib.auth.models import User
@@ -93,15 +93,17 @@ if __name__ == '__main__':
 
     print("Clearing database")
     User.objects.all().delete()
+    Department.objects.all().delete()
     UserProfile.objects.all().delete()
     Instructor.objects.all().delete()
     Course.objects.all().delete()
+    CourseInstructor.objects.all().delete()
     CourseAccessRequested.objects.all().delete()
 
     print("Creating superuser")
     create_super_user()
 
-    print("Creating users")
+    print("Creating departments and users")
     create_user_profile()
 
     print("Creating instructors")

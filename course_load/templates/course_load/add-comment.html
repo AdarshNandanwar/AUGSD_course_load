@@ -30,8 +30,8 @@
 					<h3>Upload Comment File</h3>
 					<form class="m-5" action="/course-load/add-comment/" method="post" enctype='multipart/form-data'>
 						{% csrf_token %}
-						<div>Currently uploaded: </div>
-						<a href="/media/{{ uploaded_file }}">{{ uploaded_file }}</a>
+						{% comment %} <div>Currently uploaded: </div>
+						<a href="/media/{{ uploaded_file }}">{{ uploaded_file }}</a> {% endcomment %}
 						<div class="m-3">
 							{{ form.comment_file }}
 						</div>
