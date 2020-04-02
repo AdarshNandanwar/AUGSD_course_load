@@ -28,7 +28,6 @@ function App() {
     t_count:0,
     course_code: null,
     course_type: null,
-    student_count: 0,
     max_strength_per_l: 0,
     max_strength_per_t: 0,
     max_strength_per_p: 0,

@@ -78,7 +78,6 @@ export default function CourseInfo(props) {
                 <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.l_count} type="Number" name="l_count" label="no. of faculties for lectures" style={styles.text_field} />
                 <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.t_count} type="Number" name="t_count" label="no. of faculties for tutorials" style={styles.text_field}  />
                 <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.p_count} type="Number" name="p_count" label="no. of faculties for practicals" style={styles.text_field}  />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.student_count} type="Number" name="student_count" label="No. of students" style={styles.text_field}  />
                 <Autocomplete
                 options={props.state.faculty_list}
                 getOptionLabel={option => option.name}
