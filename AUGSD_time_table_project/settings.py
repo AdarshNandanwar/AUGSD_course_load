@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'course_load',
     'client',
+    'django_cleanup',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
