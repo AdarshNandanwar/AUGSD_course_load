@@ -89,8 +89,9 @@ export default function CourseInfo(props) {
                 renderInput={params =>  <TextField style={{...styles.text_field,width: '100%'}} {...params} label={'IC'} />}
                 onChange={(event,value) => handleIcChange(event,value)}
                 />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.max_strength} type="Number" name="max_strength" label="Max Strength" style={styles.text_field}  />
-
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.max_strength_per_l} type="Number" name="max_strength_per_l" label="Max Strength Per Lect" style={styles.text_field}  />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.max_strength_per_t} type="Number" name="max_strength_per_t" label="Max Strength Per Tut" style={styles.text_field}  />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.max_strength_per_p} type="Number" name="max_strength_per_p" label="Max Strength Per Prac" style={styles.text_field}  />
             </Form>
         </CardContent>
         </Card>
