@@ -383,7 +383,7 @@ class AddComment(View):
             'uploaded_file': request.user.userprofile.department.comment_file})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES or None)
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             request.user.userprofile.department.comment_file = request.FILES['comment_file']
             request.user.userprofile.department.save()
