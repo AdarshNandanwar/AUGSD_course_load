@@ -30,7 +30,7 @@
 					<h3>Upload Comment File</h3>
 					<form class="m-5" action="/course-load/add-comment/" method="post" enctype='multipart/form-data'>
 						{% csrf_token %}
-						<div class="text-danger">One file per user</div>
+						<div class="text-danger">Only one file allowed per user.</div>
 						<div class="m-3">
 							{{ form.comment_file }}
 						</div>
