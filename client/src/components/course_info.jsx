@@ -61,26 +61,26 @@ export default function CourseInfo(props) {
         const t = props.courseInfo.t
         const p = props.courseInfo.p
 
-        if(name == 'l_count'){
-            // let diff = value - l.length
-            // while (diff--) {
-            //     l.push(null);
-            // }
-            l.length = value;
+        if(name == 'l_count' && value> l.length){
+            let diff = value - l.length
+            while (diff--) {
+                l.push(null);
+            }
+            // l.length = value;
         }
-        if(name == 't_count'){
-            // let diff = value - t.length
-            // while (diff--) {
-            //     t.push(null);
-            // }
-            t.length = value;
+        if(name == 't_count' && value> t.length){
+            let diff = value - t.length
+            while (diff--) {
+                t.push(null);
+            }
+            // t.length = value;
         }
-        if(name == 'p_count'){
-            // let diff = value - p.length
-            // while (diff--) {
-            //     p.push(null);
-            // }
-            p.length = value;
+        if(name == 'p_count' && value> p.length){
+            let diff = value - p.length
+            while (diff--) {
+                p.push(null);
+            }
+            // p.length = value;
         }
         setCourseInfo({...courseInfo,l,t,p,[name]: value});
     }
