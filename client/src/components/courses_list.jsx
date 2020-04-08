@@ -99,7 +99,7 @@ export default function SimpleTabs(props) {
 
   const handleNewCourseSubmit = async () => {
     setExtraCourseStatus('Adding');
-    console.log(extraCDC,extraElective);
+    // console.log(extraCDC,extraElective);
     if(!extraElective && !extraCDC)
     setExtraCourseStatus('Please Select A Course');
 
@@ -139,13 +139,16 @@ export default function SimpleTabs(props) {
       else
       course_type = 'E'
       props.setCourseInfo({...props.courseInfo,course_type,course_code:course.code});
-      console.log({course_type,course_code:course.code});
+    // console.log({course_type,course_code:course.code});
       const res = await axios.post('/course-load/get-course-data/',{course_type,course_code:course.code});
       // const res = {}
       // res.data = courseInfo;
-      const l = res.data.data.l.map(course => course.psrn_or_id);
-      const t = res.data.data.t.map(course => course.psrn_or_id);
-      const p = res.data.data.p.map(course => course.psrn_or_id);
+      // const l = res.data.data.l.map(course => course.psrn_or_id);
+      // const t = res.data.data.t.map(course => course.psrn_or_id);
+      // const p = res.data.data.p.map(course => course.psrn_or_id);
+      res.data.data.l.length = res.data.data.l_count;
+      res.data.data.t.length = res.data.data.t_count;
+      res.data.data.p.length = res.data.data.p_count;
       const ic = res.data.data.ic.psrn_or_id;
       await props.setCourseInfo({
         l_count:0,
@@ -156,17 +159,17 @@ export default function SimpleTabs(props) {
         max_strength_per_l: 0,
         max_strength_per_t: 0,
         max_strength_per_p: 0,
-        l_section_count: 0,
-        t_section_count: 0,
-        p_section_count: 0,
+        course_code: null,
+        course_type: null,
         ic: null,
         l: [],
         t: [],
         p: []
       });
-      await props.setCourseInfo({...res.data.data,l,t,p,ic });
-      console.log(props.courseInfo);
-      console.log(res.data);
+      // await props.setCourseInfo({...res.data.data,l,t,p,ic });
+      await props.setCourseInfo({...res.data.data,ic });
+      // console.log(props.courseInfo);
+      // console.log(res.data);
   }
 
   const getCourseList = (courses) => {

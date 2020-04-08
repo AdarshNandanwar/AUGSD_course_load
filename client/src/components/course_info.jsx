@@ -56,7 +56,33 @@ export default function CourseInfo(props) {
     const handleInfoChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        setCourseInfo({...courseInfo,[name]: value});
+
+        const l = props.courseInfo.l
+        const t = props.courseInfo.t
+        const p = props.courseInfo.p
+
+        if(name == 'l_count'){
+            // let diff = value - l.length
+            // while (diff--) {
+            //     l.push(null);
+            // }
+            l.length = value;
+        }
+        if(name == 't_count'){
+            // let diff = value - t.length
+            // while (diff--) {
+            //     t.push(null);
+            // }
+            t.length = value;
+        }
+        if(name == 'p_count'){
+            // let diff = value - p.length
+            // while (diff--) {
+            //     p.push(null);
+            // }
+            p.length = value;
+        }
+        setCourseInfo({...courseInfo,l,t,p,[name]: value});
     }
     const handleIcChange = (e,v) => {
        if (v)
@@ -72,12 +98,12 @@ export default function CourseInfo(props) {
             </Typography>
             <Form className={classes.root} noValidate>
 
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.l_section_count} type="Number" name="l_section_count" label="no. of lectures" style={styles.text_field} />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.t_section_count} type="Number" name="t_section_count" label="no. of tutorials" style={styles.text_field} />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.p_section_count} type="Number" name="p_section_count" label="no. of practicals" style={styles.text_field} />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.l_count} type="Number" name="l_count" label="no. of faculties for lectures" style={styles.text_field} />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.l_count} type="Number" name="l_count" label="no. of lectures" style={styles.text_field} />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.t_count} type="Number" name="t_count" label="no. of tutorials" style={styles.text_field} />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.p_count} type="Number" name="p_count" label="no. of practicals" style={styles.text_field} />
+                {/* <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.l_count} type="Number" name="l_count" label="no. of faculties for lectures" style={styles.text_field} />
                 <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.t_count} type="Number" name="t_count" label="no. of faculties for tutorials" style={styles.text_field}  />
-                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.p_count} type="Number" name="p_count" label="no. of faculties for practicals" style={styles.text_field}  />
+                <TextField onChange={(event) => handleInfoChange(event)} value={props.courseInfo.p_count} type="Number" name="p_count" label="no. of faculties for practicals" style={styles.text_field}  /> */}
                 <Autocomplete
                 options={props.state.faculty_list}
                 getOptionLabel={option => option.name}

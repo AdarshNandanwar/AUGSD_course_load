@@ -31,9 +31,8 @@ function App() {
     max_strength_per_l: 0,
     max_strength_per_t: 0,
     max_strength_per_p: 0,
-    l_section_count: 0,
-    t_section_count: 0,
-    p_section_count: 0,
+    course_code: null,
+    course_type: null,
     ic: null,
     l: [],
     t: [],
@@ -57,11 +56,11 @@ function App() {
     if(courseInfo.ic == undefined || courseInfo.ic == null || courseInfo.ic == '')
       return setStatus('Please Choose IC');
     if(courseInfo.l.length < courseInfo.l_count)
-      return setStatus('Please Choose Faculty for each Lecture');
+      return setStatus('Please Choose atleast one Faculty for each Lecture');
     if(courseInfo.t.length < courseInfo.t_count)
-      return setStatus('Please Choose Faculty for each Tutorial');
+      return setStatus('Please Choose atleast one Faculty for each Tutorial');
     if(courseInfo.p.length < courseInfo.p_count)
-      return setStatus('Please Choose Faculty for each Practical');
+      return setStatus('Please Choose atleast one Faculty for each Practical');
     courseInfo.student_count = parseInt(courseInfo.student_count);
     axios.post('/course-load/submit-data/',courseInfo)
     .then(response => setStatus('Submitted'))
