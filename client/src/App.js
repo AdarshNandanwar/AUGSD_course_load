@@ -18,11 +18,7 @@ const FlexDiv = styled.div`
   flex-direction: row;
 `;
 
-function App() {
-  
-  const [state, setState] = useState(data.data);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [courseInfo, setCourseInfo] = useState({
+const defaultCourseInfo = {
     l_count:0,
     p_count:0,
     t_count:0,
@@ -37,7 +33,13 @@ function App() {
     l: [],
     t: [],
     p: []
-  });
+  }
+
+function App() {
+  
+  const [state, setState] = useState(data.data);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseInfo, setCourseInfo] = useState(defaultCourseInfo);
 
   const getData = async () => {
     const res = await axios.get('/course-load/get-data/');
@@ -55,12 +57,58 @@ function App() {
       return setStatus('Please Choose a Course');
     if(courseInfo.ic == undefined || courseInfo.ic == null || courseInfo.ic == '')
       return setStatus('Please Choose IC');
-    if(courseInfo.l.length < courseInfo.l_count)
-      return setStatus('Please Choose atleast one Faculty for each Lecture');
-    if(courseInfo.t.length < courseInfo.t_count)
-      return setStatus('Please Choose atleast one Faculty for each Tutorial');
-    if(courseInfo.p.length < courseInfo.p_count)
-      return setStatus('Please Choose atleast one Faculty for each Practical');
+    
+    let allFieldsFilled = true;
+
+    courseInfo.l.forEach(faculty => {
+      if(!faculty || !faculty.psrn_or_id || !faculty.section_number)
+      allFieldsFilled = false;
+    });
+
+    courseInfo.t.forEach(faculty => {
+      if(!faculty || !faculty.psrn_or_id || !faculty.section_number)
+      allFieldsFilled = false;
+    });
+
+    courseInfo.p.forEach(faculty => {
+      if(!faculty || !faculty.psrn_or_id || !faculty.section_number)
+      allFieldsFilled = false;
+    });
+
+    if(!allFieldsFilled){
+      return setStatus('Please fill all fields or delete extra fields');
+    }
+
+    let facultyForEachSection = true;
+
+    for(let i =1; i<= courseInfo.l_count; i++){
+      const present = courseInfo.l.some(faculty => faculty.section_number == i);
+      if(!present){
+        facultyForEachSection = false;
+        break;
+      }
+    }
+
+    for(let i =1; i<= courseInfo.t_count; i++){
+      const present = courseInfo.t.some(faculty => faculty.section_number == i);
+      if(!present){
+        facultyForEachSection = false;
+        break;
+      }
+    }
+
+    for(let i =1; i<= courseInfo.p_count; i++){
+      const present = courseInfo.p.some(faculty => faculty.section_number == i);
+      if(!present){
+        facultyForEachSection = false;
+        break;
+      }
+    }
+
+    if(!facultyForEachSection){
+      return setStatus('Please choose atlease a faculty for each section');
+    }
+
     courseInfo.student_count = parseInt(courseInfo.student_count);
     axios.post('/course-load/submit-data/',courseInfo)
     .then(response => setStatus('Submitted'))
@@ -77,6 +125,25 @@ function App() {
   }
   const handleFileAdd = async () => {
     window.location.href="/course-load/add-comment/";
+  }
+  const handleCourseDelete = async () => {
+    const course_code = courseInfo.course_code;
+    if(course_code){
+      try{
+        await axios.post('/course-load/clear-course/',{course_code});
+      }catch(err){
+        console.log(err);
+      }finally{
+        setCourseInfo({...defaultCourseInfo});
+      }
+    }
+    else
+    setStatus('Please choose a course before clearing its data');
+
+    setTimeout(() => {
+      setStatus('')
+    }, 2000);
+
   }
   return (
     <div className="App">
@@ -95,6 +162,11 @@ function App() {
             <Button variant="contained" color="secondary" onClick={handleFileAdd} style={{marginBottom: 20, marginLeft: '20px'}}>
               <Typography>
                 Upload Comment File
+              </Typography>
+            </Button> 
+             <Button variant="contained" color="secondary" onClick={handleCourseDelete} style={{marginBottom: 20, marginLeft: '20px'}}>
+              <Typography>
+                Clear Course Data
               </Typography>
             </Button>
             <br/>
