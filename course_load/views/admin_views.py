@@ -272,7 +272,7 @@ def download_erp(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load ERP.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor name', 'PSRN/ID', 'Role'])
-        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct()
+        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
@@ -293,18 +293,18 @@ def download_erp(request):
             if not ic_printed:
                 writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name, ic.psrn_or_id, 'IC'])
               
-            instructor_list = CourseInstructor.objects.filter(course = course).values('instructor').distinct()
+            instructor_list = CourseInstructor.objects.filter(course = course).values('instructor').distinct().order_by('instructor__instructor_type', 'instructor')
             for instructor in instructor_list:
                 if instructor['instructor'] == ic.psrn_or_id:
                     continue
                 instructor = Instructor.objects.get(psrn_or_id = instructor['instructor'])
-                l_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'L')
+                l_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'L').order_by('section_number')
                 for entry in l_entry_list:
                     writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
-                t_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'T')
+                t_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'T').order_by('section_number')
                 for entry in t_entry_list:
                     writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
-                p_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'P')
+                p_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'P').order_by('section_number')
                 for entry in p_entry_list:
                     writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
         return response
