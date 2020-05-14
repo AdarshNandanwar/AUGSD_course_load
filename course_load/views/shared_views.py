@@ -27,6 +27,7 @@ def download_course_wise(request):
             if len(equivalent_course_list) == 1:
                 writer.writerow([course.code, course.name, '', course.max_strength_per_l, course.max_strength_per_t, course.max_strength_per_p])
             else:
+                equivalent_course_list = sorted(equivalent_course_list, key = lambda i: i['code'])
                 combined_code = equivalent_course_list[0]['code']
                 for i in range(1, len(equivalent_course_list)):
                     combined_code = combined_code+' / '+equivalent_course_list[i]['code']

@@ -311,6 +311,59 @@ def download_erp(request):
     else:
         return HttpResponseRedirect('/course-load/dashboard')
 
+@login_required
+def download_time_table(request):
+    if request.user.is_superuser:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="Course Load TimtTable.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor names'])
+        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+        for course in course_list:
+            course = Course.objects.get(code = course['code'])
+
+            ic = course.ic
+            if CourseInstructor.objects.filter(course = course, instructor = ic).count() == 0:
+                writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name])
+
+            l_count = CourseInstructor.objects.filter(course = course, section_type = 'L').values('section_number').distinct().count()
+            t_count = CourseInstructor.objects.filter(course = course, section_type = 'T').values('section_number').distinct().count()
+            p_count = CourseInstructor.objects.filter(course = course, section_type = 'P').values('section_number').distinct().count()
+
+            for sec in range(1, l_count+1):
+                instructor_str = ""
+                has_ic = CourseInstructor.objects.filter(course = course, section_type = 'L', section_number = sec, instructor = ic)
+                for course_instructor in has_ic:
+                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'L', section_number = sec).exclude(instructor = ic)
+                for course_instructor in course_instructor_list:
+                    instructor_str += (course_instructor.instructor.name.title()+'/ ')
+                instructor_str = instructor_str[:-2]
+                writer.writerow([course.comcode, course.code, course.name, 'L', sec, instructor_str])
+            for sec in range(1, t_count+1):
+                instructor_str = ""
+                has_ic = CourseInstructor.objects.filter(course = course, section_type = 'T', section_number = sec, instructor = ic)
+                for course_instructor in has_ic:
+                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'T', section_number = sec).exclude(instructor = ic)
+                for course_instructor in course_instructor_list:
+                    instructor_str += (course_instructor.instructor.name.title()+'/ ')
+                instructor_str = instructor_str[:-2]
+                writer.writerow([course.comcode, course.code, course.name, 'T', sec, instructor_str])
+            for sec in range(1, p_count+1):
+                instructor_str = ""
+                has_ic = CourseInstructor.objects.filter(course = course, section_type = 'P', section_number = sec, instructor = ic)
+                for course_instructor in has_ic:
+                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'P', section_number = sec).exclude(instructor = ic)
+                for course_instructor in course_instructor_list:
+                    instructor_str += (course_instructor.instructor.name.title()+'/ ')
+                instructor_str = instructor_str[:-2]
+                writer.writerow([course.comcode, course.code, course.name, 'P', sec, instructor_str])
+        return response
+    else:
+        return HttpResponseRedirect('/course-load/dashboard')
+
 @method_decorator(login_required, name='dispatch')
 class UploadInitialData(View):
     form_class = InitialDataFileForm
