@@ -322,6 +322,7 @@ def download_time_table(request):
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
+            ic_printed = False;
             ic = course.ic
             if CourseInstructor.objects.filter(course = course, instructor = ic).count() == 0:
                 writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name])
@@ -334,7 +335,11 @@ def download_time_table(request):
                 instructor_str = ""
                 has_ic = CourseInstructor.objects.filter(course = course, section_type = 'L', section_number = sec, instructor = ic)
                 for course_instructor in has_ic:
-                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                    if not ic_printed:
+                        instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                        ic_printed = True
+                    else:
+                        instructor_str += (course_instructor.instructor.name.title()+'/ ')
                 course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'L', section_number = sec).exclude(instructor = ic)
                 for course_instructor in course_instructor_list:
                     instructor_str += (course_instructor.instructor.name.title()+'/ ')
@@ -344,7 +349,11 @@ def download_time_table(request):
                 instructor_str = ""
                 has_ic = CourseInstructor.objects.filter(course = course, section_type = 'T', section_number = sec, instructor = ic)
                 for course_instructor in has_ic:
-                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                    if not ic_printed:
+                        instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                        ic_printed = True
+                    else:
+                        instructor_str += (course_instructor.instructor.name.title()+'/ ')
                 course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'T', section_number = sec).exclude(instructor = ic)
                 for course_instructor in course_instructor_list:
                     instructor_str += (course_instructor.instructor.name.title()+'/ ')
@@ -354,10 +363,14 @@ def download_time_table(request):
                 instructor_str = ""
                 has_ic = CourseInstructor.objects.filter(course = course, section_type = 'P', section_number = sec, instructor = ic)
                 for course_instructor in has_ic:
-                    instructor_str += (course_instructor.instructor.name.upper()+'/ ')
+                    if not ic_printed:
+                        instructor_str += (course_instructor.instructor.name.upper()+', ')
+                        ic_printed = True
+                    else:
+                        instructor_str += (course_instructor.instructor.name.title()+', ')
                 course_instructor_list = CourseInstructor.objects.filter(course = course, section_type = 'P', section_number = sec).exclude(instructor = ic)
                 for course_instructor in course_instructor_list:
-                    instructor_str += (course_instructor.instructor.name.title()+'/ ')
+                    instructor_str += (course_instructor.instructor.name.title()+', ')
                 instructor_str = instructor_str[:-2]
                 writer.writerow([course.comcode, course.code, course.name, 'P', sec, instructor_str])
         return response
