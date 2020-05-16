@@ -280,16 +280,25 @@ def download_erp(request):
             ic_printed = False
             l_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'L')
             for entry in l_entry_list:
+                if ic_printed:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                else:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
                 ic_printed = True
-                writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
             t_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'T')
             for entry in t_entry_list:
+                if ic_printed:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                else:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
                 ic_printed = True
-                writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
             p_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'P')
             for entry in p_entry_list:
+                if ic_printed:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                else:
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
                 ic_printed = True
-                writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
             if not ic_printed:
                 writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name, ic.psrn_or_id, 'IC'])
               
@@ -315,7 +324,7 @@ def download_erp(request):
 def download_time_table(request):
     if request.user.is_superuser:
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="Course Load TimtTable.csv"'
+        response['Content-Disposition'] = 'attachment; filename="Course Load timetable.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor names'])
         course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
