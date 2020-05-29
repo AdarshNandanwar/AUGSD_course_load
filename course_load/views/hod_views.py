@@ -10,7 +10,8 @@ from django.utils.decorators import method_decorator
 from django.views import generic, View
 
 from course_load.forms import CommentFileForm
-from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested, AdminSettings
+from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested
+from course_load.models import PortalSettings
 from course_load.utils import get_department_list, get_equivalent_course_info
 
 # Only for testing
@@ -38,7 +39,7 @@ class DashboardView(generic.TemplateView):
             return render(request, self.template_name, context)
         else:
 
-            if not AdminSettings.objects.filter().first().is_portal_active:
+            if not PortalSettings.objects.filter().first().is_portal_active:
                 return render(request, self.closed_template_name)
 
             try:

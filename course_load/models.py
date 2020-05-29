@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class AdminSettings(models.Model):
+class PortalSettings(models.Model):
     is_portal_active = models.BooleanField(default=False)
 
     def __str__(self):

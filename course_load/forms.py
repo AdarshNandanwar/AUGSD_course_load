@@ -1,9 +1,10 @@
 from django import forms
-from .models import Department, Course, Instructor, UserProfile, AdminSettings
+from .models import Department, Course, Instructor, UserProfile
+from .models import PortalSettings
 
 class TogglePortalForm(forms.ModelForm):
     class Meta:  
-        model = AdminSettings  
+        model = PortalSettings  
         fields = ['is_portal_active']
         labels = {
             "is_portal_active": "Activate portal",

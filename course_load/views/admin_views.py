@@ -9,7 +9,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from course_load.forms import *
-from course_load.models import Course, Instructor, CourseInstructor, AdminSettings
+from course_load.models import Course, Instructor, CourseInstructor
+from course_load.models import PortalSettings
 
 from AUGSD_time_table_project.settings import MEDIA_ROOT, BASE_DIR
 from populate import populate_from_admin_data
@@ -23,7 +24,7 @@ class TogglePortal(View):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
-            initial = {"is_portal_active": AdminSettings.objects.filter().first().is_portal_active}
+            initial = {"is_portal_active": PortalSettings.objects.filter().first().is_portal_active}
             form = self.form_class(initial=initial)
             return render(request, self.template_name, {'form': form})
         else:
@@ -34,7 +35,7 @@ class TogglePortal(View):
             try:
                 form = self.form_class(request.POST)
                 if form.is_valid():
-                    AdminSettings.objects.filter().update(is_portal_active=form.cleaned_data["is_portal_active"])
+                    PortalSettings.objects.filter().update(is_portal_active=form.cleaned_data["is_portal_active"])
                     messages.success(request, "Portal toggled successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.error(request, "Error occured.", extra_tags='alert-danger')
