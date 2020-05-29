@@ -137,6 +137,7 @@ if __name__ == '__main__':
 
     print("Clearing database")
     
+    AdminSettings.objects.all().delete()
     User.objects.all().delete()
     Department.objects.all().delete()
     UserProfile.objects.all().delete()
@@ -146,6 +147,7 @@ if __name__ == '__main__':
     CourseAccessRequested.objects.all().delete()
 
     file = 'data.xlsx'
+    AdminSettings.objects.create()
     create_super_user()
     create_user_profile(file)
     create_instructor(file)

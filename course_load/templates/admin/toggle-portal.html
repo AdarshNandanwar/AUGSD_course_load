@@ -1,0 +1,23 @@
+{% extends "admin/base-admin.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="text-left">
+	<a class="m-4" href="/course-load/dashboard">Back</a>
+</div>
+<div class="text-center">
+	<h1>Activate/Deactivate Portal</h1> 
+	<div class="col-8" style="margin: auto;">
+		<form class="m-5" action="/course-load/toggle-portal/" method="post">
+			{% csrf_token %}
+			<table>
+			{{form|crispy}}
+			</table>
+			<input class="btn btn-dark" type="submit" value="Submit">
+		</form>
+	</div>
+</div>
+	
+{% endblock %}

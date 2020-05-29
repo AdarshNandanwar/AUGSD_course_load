@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class AdminSettings(models.Model):
+    is_portal_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "settings"
+
 class Department(models.Model):
     code = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length = 100, null = False)

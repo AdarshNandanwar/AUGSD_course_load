@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic, View
 
 from course_load.forms import CommentFileForm
-from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested
+from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested, AdminSettings
 from course_load.utils import get_department_list, get_equivalent_course_info
 
 # Only for testing
@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 @method_decorator(login_required, name='dispatch')
 class DashboardView(generic.TemplateView):
     template_name = 'admin/admin-page.html'
+    closed_template_name = 'admin/closed.html'
     index_file_path = os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')
 
     def get(self, request, *args, **kwargs):
@@ -36,6 +37,10 @@ class DashboardView(generic.TemplateView):
                 })
             return render(request, self.template_name, context)
         else:
+
+            if not AdminSettings.objects.filter().first().is_portal_active:
+                return render(request, self.closed_template_name)
+
             try:
                 with open(self.index_file_path) as f:
                     return HttpResponse(f.read())

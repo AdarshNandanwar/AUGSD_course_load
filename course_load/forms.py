@@ -1,5 +1,13 @@
 from django import forms
-from .models import Department, Course, Instructor, UserProfile
+from .models import Department, Course, Instructor, UserProfile, AdminSettings
+
+class TogglePortalForm(forms.ModelForm):
+    class Meta:  
+        model = AdminSettings  
+        fields = ['is_portal_active']
+        labels = {
+            "is_portal_active": "Activate portal",
+        }
 
 class CommentFileForm(forms.ModelForm):
     class Meta:  
