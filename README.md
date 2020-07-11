@@ -1,1 +1,1 @@
-# AUGSD_time_table_project
+# AUGSD Course Load Project
