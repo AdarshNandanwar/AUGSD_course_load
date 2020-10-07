@@ -76,22 +76,29 @@ def get_data(request, *args, **kwargs):
         faculty_list_1 = Instructor.objects.filter(department = dept, instructor_type = 'F')
         faculty_list_2 = Instructor.objects.filter(department = dept, instructor_type = 'S')
         faculty_list_3 = Instructor.objects.filter(instructor_type = 'F').exclude(department = dept)
-        department_cdc_list = list(department_cdc_list.values('name', 'code', 'ic'))
-        for course in department_cdc_list:
-            course['is_active'] = course['ic'] != None
-            course.pop('ic')
-        department_elective_list = list(department_elective_list.values('name', 'code', 'ic'))
-        for course in department_elective_list:
-            course['is_active'] = course['ic'] != None
-            course.pop('ic')
-        requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'ic'))
-        for course in requested_cdc_list:
-            course['is_active'] = course['ic'] != None
-            course.pop('ic')
-        requested_elective_list = list(requested_elective_list.values('name', 'code', 'ic'))
-        for course in requested_elective_list:
-            course['is_active'] = course['ic'] != None
-            course.pop('ic')
+
+        # department_cdc_list = list(department_cdc_list.values('name', 'code', 'ic'))
+        # for course in department_cdc_list:
+        #     course['is_active'] = course['ic'] != None
+        #     course.pop('ic')
+        # department_elective_list = list(department_elective_list.values('name', 'code', 'ic'))
+        # for course in department_elective_list:
+        #     course['is_active'] = course['ic'] != None
+        #     course.pop('ic')
+        # requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'ic'))
+        # for course in requested_cdc_list:
+        #     course['is_active'] = course['ic'] != None
+        #     course.pop('ic')
+        # requested_elective_list = list(requested_elective_list.values('name', 'code', 'ic'))
+        # for course in requested_elective_list:
+        #     course['is_active'] = course['ic'] != None
+        #     course.pop('ic')
+
+        department_cdc_list = list(department_cdc_list.values('name', 'code', 'enable'))
+        department_elective_list = list(department_elective_list.values('name', 'code', 'enable'))
+        requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'enable'))
+        requested_elective_list = list(requested_elective_list.values('name', 'code', 'enable'))
+
         other_cdc_list = list(other_cdc_list.values('name', 'code'))
         other_elective_list = list(other_elective_list.values('name', 'code'))
         faculty_list_1 = list(faculty_list_1.values('name', 'psrn_or_id'))
@@ -152,6 +159,8 @@ def get_course_data(request, *args, **kwargs):
             })
         equivalent_course_list = get_equivalent_course_info(data['course_code'])
         response['data'] = {
+            'enable': course.enable,
+            'past_course_strength': course.past_course_strength,
             'course_code': course.code,
             'course_type': course.course_type,
             'l_count': course.l_count,
@@ -213,6 +222,7 @@ def submit_data(request, *args, **kwargs):
         course_list = get_equivalent_course_info(data['course_code'])
         for course in course_list:
             course = Course.objects.filter(code = course['code']).first()
+            course.enable = data['enable']
             course.l_count = data['l_count']
             course.t_count = data['t_count']
             course.p_count = data['p_count']
