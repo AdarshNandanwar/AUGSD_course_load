@@ -444,7 +444,7 @@ class UploadInitialData(View):
                     populate_from_admin_data(MEDIA_ROOT+'/'+str(request.user.userprofile.initial_data_file))
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
-                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-success')
+                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
             except Exception as e:
                 print(e)
@@ -457,6 +457,55 @@ class UploadInitialData(View):
 def download_data_template(request):
     if request.user.is_superuser:
         path = BASE_DIR+'/'+'data_template.xlsx'
+        if os.path.exists(path):
+            with open(path, 'rb') as excel:
+                data = excel.read()
+
+            response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=data_template.xlsx'
+            return response
+    else:
+        return HttpResponseRedirect('/course-load/dashboard')
+
+@method_decorator(login_required, name='dispatch')
+class UploadPastCourseStrengthData(View):
+    form_class = PastCourseStrengthFileForm
+    initial = {'key': 'value'}
+    template_name = 'admin/upload-past-course-strength-data.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(initial=request.user.userprofile.__dict__)
+            return render(request, self.template_name, {
+                'form': form,
+                'uploaded_file': request.user.userprofile.past_course_strength_data_file})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(request.POST, request.FILES)
+            try:
+                if form.is_valid():
+                    request.user.userprofile.past_course_strength_data_file = request.FILES['past_course_strength_data_file']
+                    request.user.userprofile.save()
+                    # populate_from_admin_data(MEDIA_ROOT+'/'+str(request.user.userprofile.past_course_strength_data_file))
+                    messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
+                    return HttpResponseRedirect('/course-load/dashboard')
+                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+            except Exception as e:
+                print(e)
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+
+@login_required
+def download_past_course_strength_data_template(request):
+    if request.user.is_superuser:
+        path = BASE_DIR+'/'+'past_course_strength_data_template.xlsx'
         if os.path.exists(path):
             with open(path, 'rb') as excel:
                 data = excel.read()
