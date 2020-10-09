@@ -305,7 +305,7 @@ def download_erp(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load ERP.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor name', 'PSRN/ID', 'Role'])
-        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
@@ -360,7 +360,7 @@ def download_time_table(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load timetable.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor names'])
-        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
