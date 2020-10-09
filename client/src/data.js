@@ -3986,13 +3986,13 @@
 // };
 
 module.exports = {
-	data: {
-		department_cdc_list: [],
-		requested_cdc_list: [],
-		requested_elective_list: [],
-		department_elective_list: [],
-		faculty_list: [],
-		other_cdc_list: [],
-		other_elective_list: []
-	}
+  data: {
+    department_cdc_list: [],
+    requested_cdc_list: [],
+    requested_elective_list: [],
+    department_elective_list: [],
+    faculty_list: [],
+    other_cdc_list: [],
+    other_elective_list: [],
+  },
 };
