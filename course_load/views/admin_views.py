@@ -443,7 +443,7 @@ class UploadInitialData(View):
                 if form.is_valid():
                     request.user.userprofile.initial_data_file = request.FILES['initial_data_file']
                     request.user.userprofile.save()
-                    populate_from_admin_data(MEDIA_ROOT+'/'+str(request.user.userprofile.initial_data_file))
+                    populate_from_admin_data(request.user.userprofile.initial_data_file.url)
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')

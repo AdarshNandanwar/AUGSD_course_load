@@ -133,14 +133,14 @@ def create_course(file):
         print(str(e))
         print("Error creating courses")
 
-def populate_from_admin_data(file):
+def populate_from_admin_data(file_s3_url):
     print("Clearing database")
     Instructor.objects.all().delete()
     Course.objects.all().delete()
     CourseInstructor.objects.all().delete()
     CourseAccessRequested.objects.all().delete()
-    create_instructor(file)
-    create_course(file)
+    create_instructor(file_s3_url)
+    create_course(file_s3_url)
     print("Done!")
 
 if __name__ == '__main__':
