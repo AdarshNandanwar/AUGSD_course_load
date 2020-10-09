@@ -182,9 +182,9 @@ export default function CourseInfo(props) {
             style={styles.text_field}
           />
           <TextField
-            inputProps={{ min: 0 }}
+            inputProps={{ min: -1 }}
             onChange={(event) => handleInfoChange(event)}
-            value={props.courseInfo.past_course_strength || 0}
+            value={props.courseInfo.past_course_strength || -1}
             type="Number"
             name="past_course_strength"
             label="Past course strength"
