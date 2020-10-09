@@ -21,6 +21,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, default=None, on_delete=models.CASCADE, null=True)
     initial_data_file = models.FileField(null = True, blank = False)
+    past_course_strength_data_file = models.FileField(null = True, blank = False)
 
     def __str__(self):
         return self.user.username
@@ -56,6 +57,8 @@ class Course(models.Model):
     )
     course_type = models.CharField(max_length=1, choices=COURSE_TYPES, null = False)
     merge_with = models.ForeignKey('self', default=None, on_delete=models.SET_DEFAULT, blank=True, null=True)
+    past_course_strength = models.IntegerField(null = True, blank = True)
+    enable = models.BooleanField(default=False)
 
     def __str__(self):
         return self.code+' ('+self.name+')'

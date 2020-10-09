@@ -26,6 +26,14 @@ class InitialDataFileForm(forms.ModelForm):
             "initial_data_file": "Data File",
         }
 
+class PastCourseStrengthFileForm(forms.ModelForm):
+    class Meta:  
+        model = UserProfile  
+        fields = ['past_course_strength_data_file']
+        labels = {
+            "past_course_strength_data_file": "Data File (in correct format)",
+        }
+
 class AddCourseForm(forms.ModelForm):
     class Meta:  
         model = Course  

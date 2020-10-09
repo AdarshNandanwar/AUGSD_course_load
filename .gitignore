@@ -1,6 +1,6 @@
 # exclude server data
 data.json
-# new_data.json
+new_data.json
 
 # exclude mediafiles
 mediafiles/*

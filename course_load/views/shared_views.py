@@ -13,7 +13,7 @@ def download_course_wise(request):
     writer.writerow(['Course number', 'Course title', 'Max strength per section: ', 'L', 'T', 'P'])
     writer.writerow(['PSRN/ID', 'Instructor name','', 'L', 'T', 'P', 'Role'])
     printed_set = set()
-    course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+    course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
     for course in course_list:
         course = Course.objects.get(code = course['code'])
         if request.user.is_superuser or course.department == request.user.userprofile.department or CourseAccessRequested.objects.filter(course = course, department = request.user.userprofile.department).exists():
@@ -59,13 +59,13 @@ def download_instructor_wise(request):
     writer.writerow(['Course number', 'Course title', '', 'L', 'T', 'P', 'Role'])
     instructor_list = None
     if request.user.is_superuser:
-        instructor_list_1 = list(CourseInstructor.objects.filter().values_list('instructor', flat=True).distinct())
-        instructor_list_2 = list(Course.objects.filter(ic__isnull = False).values_list('ic', flat=True).distinct())
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True).values_list('ic', flat=True).distinct())
         instructor_list = instructor_list_1 + instructor_list_2
         instructor_list = list(set(instructor_list))
     else:
-        instructor_list_1 = list(CourseInstructor.objects.filter(instructor__department = request.user.userprofile.department).values_list('instructor', flat=True).distinct())
-        instructor_list_2 = list(Course.objects.filter(ic__isnull = False, ic__department = request.user.userprofile.department).values_list('ic', flat=True).distinct())
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor__department = request.user.userprofile.department).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True, ic__department = request.user.userprofile.department).values_list('ic', flat=True).distinct())
         instructor_list = instructor_list_1 + instructor_list_2
         instructor_list = list(set(instructor_list))
     instructor_list = Instructor.objects.filter(psrn_or_id__in = instructor_list).order_by('department', 'instructor_type', 'psrn_or_id')
@@ -74,8 +74,8 @@ def download_instructor_wise(request):
         writer.writerow([])
         writer.writerow([instructor.psrn_or_id, instructor.name, instructor.department])
         writer.writerow([])
-        course_list_1 = list(CourseInstructor.objects.filter(instructor = instructor).values_list('course', flat=True).distinct())
-        course_list_2 = list(Course.objects.filter(ic = instructor).values_list('code', flat=True).distinct())
+        course_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor = instructor).values_list('course', flat=True).distinct())
+        course_list_2 = list(Course.objects.filter(enable = True, ic = instructor).values_list('code', flat=True).distinct())
         course_list = course_list_1 + course_list_2
         course_list = list(set(course_list))
         printed_set = set()

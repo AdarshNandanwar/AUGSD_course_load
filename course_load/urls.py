@@ -17,6 +17,8 @@ urlpatterns = [
     path('download-erp/', admin_views.download_erp),
     path('download-time-table/', admin_views.download_time_table),
     path('download-data-template/', admin_views.download_data_template),
+    path('download-past-course-strength-data-template/', admin_views.download_past_course_strength_data_template),
     path('toggle-portal/', admin_views.TogglePortal.as_view()),
     path('upload-initial-data/', admin_views.UploadInitialData.as_view()),
+    path('upload-past-course-strength-data/', admin_views.UploadPastCourseStrengthData.as_view()),
 ]

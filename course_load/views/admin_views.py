@@ -1,5 +1,7 @@
 import csv
 import os
+import pandas as pd
+import numpy as np
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -305,7 +307,7 @@ def download_erp(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load ERP.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor name', 'PSRN/ID', 'Role'])
-        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
@@ -360,7 +362,7 @@ def download_time_table(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load timetable.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor names'])
-        course_list = Course.objects.filter(ic__isnull = False).values('code').distinct().order_by('code')
+        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
@@ -444,7 +446,7 @@ class UploadInitialData(View):
                     populate_from_admin_data(MEDIA_ROOT+'/'+str(request.user.userprofile.initial_data_file))
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
-                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-success')
+                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
             except Exception as e:
                 print(e)
@@ -463,6 +465,70 @@ def download_data_template(request):
 
             response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = 'attachment; filename=data_template.xlsx'
+            return response
+    else:
+        return HttpResponseRedirect('/course-load/dashboard')
+
+@method_decorator(login_required, name='dispatch')
+class UploadPastCourseStrengthData(View):
+    form_class = PastCourseStrengthFileForm
+    initial = {'key': 'value'}
+    template_name = 'admin/upload-past-course-strength-data.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(initial=request.user.userprofile.__dict__)
+            return render(request, self.template_name, {
+                'form': form,
+                'uploaded_file': request.user.userprofile.past_course_strength_data_file})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(request.POST, request.FILES)
+            try:
+                if form.is_valid():
+                    request.user.userprofile.past_course_strength_data_file = request.FILES['past_course_strength_data_file']
+                    request.user.userprofile.save()
+
+
+                    print("Populating past course capacity")
+                    try:
+                        df= pd.read_excel(request.user.userprofile.past_course_strength_data_file.url, 'sheet1', skiprows=1, usecols=['Subject', 'Catalog No.'])
+                        df['course_code'] = df['Subject'].str.cat(df['Catalog No.'], sep =" ") 
+                        df['size'] = df.groupby(['Subject', 'Catalog No.']).transform(np.size)
+                        df = df[['course_code', 'size']]
+                        df = df.drop_duplicates('course_code')
+                        for ind in df.index:
+                            Course.objects.filter(code = df['course_code'][ind].upper()).update(past_course_strength = df['size'][ind])
+                    except Exception as e:
+                        print("Error populating past course capacity")
+                        raise Exception(e)
+
+
+                    messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
+                    return HttpResponseRedirect('/course-load/dashboard')
+                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+            except Exception as e:
+                print(e)
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+
+@login_required
+def download_past_course_strength_data_template(request):
+    if request.user.is_superuser:
+        path = BASE_DIR+'/'+'past_course_strength_data_template.xls'
+        if os.path.exists(path):
+            with open(path, 'rb') as excel:
+                data = excel.read()
+
+            response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=past_course_strength_data_template.xls'
             return response
     else:
         return HttpResponseRedirect('/course-load/dashboard')
