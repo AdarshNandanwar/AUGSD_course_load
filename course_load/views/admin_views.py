@@ -1,5 +1,7 @@
 import csv
 import os
+import pandas as pd
+import numpy as np
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -489,7 +491,22 @@ class UploadPastCourseStrengthData(View):
                 if form.is_valid():
                     request.user.userprofile.past_course_strength_data_file = request.FILES['past_course_strength_data_file']
                     request.user.userprofile.save()
-                    # populate_from_admin_data(MEDIA_ROOT+'/'+str(request.user.userprofile.past_course_strength_data_file))
+
+
+                    print("Populating past course capacity")
+                    try:
+                        df= pd.read_excel(request.user.userprofile.past_course_strength_data_file.url, 'sheet1', skiprows=1, usecols=['Subject', 'Catalog No.'])
+                        df['course_code'] = df['Subject'].str.cat(df['Catalog No.'], sep =" ") 
+                        df['size'] = df.groupby(['Subject', 'Catalog No.']).transform(np.size)
+                        df = df[['course_code', 'size']]
+                        df = df.drop_duplicates('course_code')
+                        for ind in df.index:
+                            Course.objects.filter(code = df['course_code'][ind].upper()).update(past_course_strength = df['size'][ind])
+                    except Exception as e:
+                        print("Error populating past course capacity")
+                        raise Exception(e)
+
+
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
@@ -505,13 +522,13 @@ class UploadPastCourseStrengthData(View):
 @login_required
 def download_past_course_strength_data_template(request):
     if request.user.is_superuser:
-        path = BASE_DIR+'/'+'past_course_strength_data_template.xlsx'
+        path = BASE_DIR+'/'+'past_course_strength_data_template.xls'
         if os.path.exists(path):
             with open(path, 'rb') as excel:
                 data = excel.read()
 
             response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=data_template.xlsx'
+            response['Content-Disposition'] = 'attachment; filename=past_course_strength_data_template.xls'
             return response
     else:
         return HttpResponseRedirect('/course-load/dashboard')

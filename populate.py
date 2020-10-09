@@ -133,6 +133,16 @@ def create_course(file):
         print(str(e))
         print("Error creating courses")
 
+def populate_from_admin_data(file):
+    print("Clearing database")
+    Instructor.objects.all().delete()
+    Course.objects.all().delete()
+    CourseInstructor.objects.all().delete()
+    CourseAccessRequested.objects.all().delete()
+    create_instructor(file)
+    create_course(file)
+    print("Done!")
+
 if __name__ == '__main__':
 
     print("Clearing database")
@@ -153,14 +163,4 @@ if __name__ == '__main__':
     create_instructor(file)
     create_course(file)
 
-    print("Done!")
-
-def populate_from_admin_data(file):
-    print("Clearing database")
-    Instructor.objects.all().delete()
-    Course.objects.all().delete()
-    CourseInstructor.objects.all().delete()
-    CourseAccessRequested.objects.all().delete()
-    create_instructor(file)
-    create_course(file)
     print("Done!")

@@ -77,23 +77,6 @@ def get_data(request, *args, **kwargs):
         faculty_list_2 = Instructor.objects.filter(department = dept, instructor_type = 'S')
         faculty_list_3 = Instructor.objects.filter(instructor_type = 'F').exclude(department = dept)
 
-        # department_cdc_list = list(department_cdc_list.values('name', 'code', 'ic'))
-        # for course in department_cdc_list:
-        #     course['is_active'] = course['ic'] != None
-        #     course.pop('ic')
-        # department_elective_list = list(department_elective_list.values('name', 'code', 'ic'))
-        # for course in department_elective_list:
-        #     course['is_active'] = course['ic'] != None
-        #     course.pop('ic')
-        # requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'ic'))
-        # for course in requested_cdc_list:
-        #     course['is_active'] = course['ic'] != None
-        #     course.pop('ic')
-        # requested_elective_list = list(requested_elective_list.values('name', 'code', 'ic'))
-        # for course in requested_elective_list:
-        #     course['is_active'] = course['ic'] != None
-        #     course.pop('ic')
-
         department_cdc_list = list(department_cdc_list.values('name', 'code', 'enable'))
         department_elective_list = list(department_elective_list.values('name', 'code', 'enable'))
         requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'enable'))
@@ -122,8 +105,8 @@ def get_data(request, *args, **kwargs):
         response['message'] = str(e)
     return JsonResponse(response, safe=False)
 
-# @login_required
-@csrf_exempt
+@login_required
+# @csrf_exempt
 def get_course_data(request, *args, **kwargs):
     response = {}
     try:
@@ -223,6 +206,7 @@ def submit_data(request, *args, **kwargs):
         for course in course_list:
             course = Course.objects.filter(code = course['code']).first()
             course.enable = data['enable']
+            course.past_course_strength = data['past_course_strength']
             course.l_count = data['l_count']
             course.t_count = data['t_count']
             course.p_count = data['p_count']
@@ -230,7 +214,7 @@ def submit_data(request, *args, **kwargs):
             course.max_strength_per_t = data['max_strength_per_t']
             course.max_strength_per_p = data['max_strength_per_p']
             course.ic = Instructor.objects.get(psrn_or_id = data['ic'])
-            course.save(update_fields=['l_count', 't_count', 'p_count', 'max_strength_per_l', 'max_strength_per_t', 'max_strength_per_p', 'ic'])
+            course.save(update_fields=['enable', 'past_course_strength', 'l_count', 't_count', 'p_count', 'max_strength_per_l', 'max_strength_per_t', 'max_strength_per_p', 'ic'])
 
             CourseInstructor.objects.filter(course = course).delete()
             l = data['l']
