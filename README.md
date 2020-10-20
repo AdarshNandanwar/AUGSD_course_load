@@ -9,21 +9,31 @@ Clone this repository into your system
 git clone https://github.com/AdarshNandanwar/augsd-course-load.git
 ```
 ## Usage
-Create and activate a virtualenv.
-```bash
-sudo apt-get install python3-pip
-sudo pip3 install virtualenv 
-virtualenv venv 
-source venv/bin/activate
-```
-Install required dependencies.
-```bash
-pip install -r requirements.txt
-```
-Run the server.
-```bash
-python manage.py runserver
-```
+1. Create and activate a virtualenv.
+    ```bash
+    sudo apt-get install python3-pip
+    sudo pip3 install virtualenv 
+    virtualenv venv 
+    source venv/bin/activate
+    ```
+2. Install required dependencies.
+    ```bash
+    pip install -r requirements.txt
+    ```
+3. Set up all environment variables
+    ```
+    export SECRET_KEY=""
+    export DEBUG_VALUE="True"
+    export DISABLE_COLLECTSTATIC="1"
+    export AWS_ACCESS_KEY_ID=""
+    export AWS_SECRET_ACCESS_KEY=""
+    export AWS_STORAGE_BUCKET_NAME=""
+    ```
+    Note- Admin panel might not work without properly (Server Error 500) setting up the AWS S3 storage bucket environment variables.
+4. Run the server.
+    ```bash
+    python manage.py runserver
+    ```
 
 ---
 
