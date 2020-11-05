@@ -1,4 +1,3 @@
-# This file contains utility functions for course_load
 
 import itertools
 import math
@@ -92,7 +91,7 @@ def get_department_elective_list(dept, file):
 def get_department_instructor_list(dept, file):
     dff= pd.read_excel(file,'FACULTY')
     Lst=[]
-    for i in range(0, 176):
+    for i in range(0, dff.shape[0]):
         if(dff['discipline'][i]==dept):
             Lst.append([dff['name'][i],dff['PSRN'][i]])
     return Lst
@@ -101,11 +100,11 @@ def get_department_phd_student_list(dept, file):
     dfs= pd.read_excel(file,'RESEARCH SCHOLAR')
     Lst=[]
     if(dept=='HSS' or dept=='HUM'):
-        for i in range(0, 420):
+        for i in range(0, dfs.shape[0]):
             if(dfs['discipline'][i]=='HSS' or dfs['discipline'][i]=='HUM'):
                 Lst.append([dfs['name'][i],dfs['IDNO'][i]])
     else:
-        for i in range(0, 420):
+        for i in range(0, dfs.shape[0]):
             if(dfs['discipline'][i][0:3]==dept[0:3]):
                 if(dept=='CHE'):
                     if(dfs['discipline'][i]=='CHE' or dfs['discipline'][i]=='CHEMISTRY'):
@@ -120,6 +119,6 @@ def get_department_phd_student_list(dept, file):
 def get_instructor_list(file):
     dff= pd.read_excel(file,'FACULTY')
     Lst=[]
-    for i in range(0,176):
+    for i in range(0,dff.shape[0]):
         Lst.append([dff['name'][i],dff['PSRN'][i]])
     return Lst
