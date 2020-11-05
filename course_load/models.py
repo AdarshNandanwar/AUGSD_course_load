@@ -32,9 +32,11 @@ class Instructor(models.Model):
     department = models.ForeignKey(Department, default=None, on_delete=models.CASCADE)
     INSTRUCTOR_TYPES = (
         ('F', 'Faculty'),
-        ('S', 'PHD Student')
+        ('S', 'PHD Student'),
+        ('M', 'ME Student')
     )
     instructor_type = models.CharField(max_length=1, choices=INSTRUCTOR_TYPES, null = False)
+    system_id = models.CharField(max_length = 15, null = True, blank = True)
 
     def __str__(self):
         return self.name
@@ -59,9 +61,27 @@ class Course(models.Model):
     merge_with = models.ForeignKey('self', default=None, on_delete=models.SET_DEFAULT, blank=True, null=True)
     past_course_strength = models.IntegerField(null = True, blank = True)
     enable = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    sem = models.CharField(max_length = 5, null = True, blank = True)
+    lpu = models.CharField(max_length = 20, null = False, blank = False, default='0 0 0')
 
     def __str__(self):
         return self.code+' ('+self.name+')'
+
+class CourseHistory(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    course = models.ForeignKey(Course, null=False, on_delete=models.CASCADE)
+    l_count = models.IntegerField(default=0)
+    t_count = models.IntegerField(default=0)
+    p_count = models.IntegerField(default=0)
+    max_strength_per_l = models.IntegerField(default=0)
+    max_strength_per_t = models.IntegerField(default=0)
+    max_strength_per_p = models.IntegerField(default=0)
+    ic = models.ForeignKey(Instructor, default=None, on_delete=models.SET_DEFAULT, null = True)
+    enable = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code
 
 class CourseInstructor(models.Model):
     SECTION_TYPES = (

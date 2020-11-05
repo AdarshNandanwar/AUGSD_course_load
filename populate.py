@@ -61,7 +61,7 @@ def create_instructor(file):
             department_phd_student_list = get_department_phd_student_list(i, file)
             for phd_student in department_phd_student_list:
                 try:
-                    Instructor.objects.create(psrn_or_id = phd_student[1], name = phd_student[0], instructor_type = 'S', department = dept)
+                    Instructor.objects.create(psrn_or_id = phd_student[1], name = phd_student[0], instructor_type = 'S' if phd_student[1][4] == 'P' else 'M', department = dept, system_id = phd_student[2])
                     # print('ADDED: ', phd_student[1], ' [', phd_student[0], ']')
                 except Exception as e:
                     print('SKIPPED: ', phd_student[1], ' [', phd_student[0], "] phd scholar is already in db.")
@@ -93,6 +93,8 @@ def create_course(file):
                         p_count = cdc[4], 
                         comcode = cdc[5], 
                         merge_with = parent_course,
+                        lpu = cdc[7],
+                        sem = cdc[8]
                     )
                     if cdc[6] is not None:
                         if parent_course is None:
@@ -117,6 +119,7 @@ def create_course(file):
                         department = dept, 
                         comcode = elective[2],
                         merge_with = parent_course,
+                        lpu = elective[4]
                     )
                     if elective[3] is not None:
                         if parent_course is None:
@@ -155,6 +158,7 @@ if __name__ == '__main__':
     Course.objects.all().delete()
     CourseInstructor.objects.all().delete()
     CourseAccessRequested.objects.all().delete()
+    CourseHistory.objects.all().delete()
 
     file = 'data.xlsx'
     PortalSettings.objects.create()

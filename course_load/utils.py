@@ -34,7 +34,8 @@ def get_department_list():
     return ['BIO', 'CHE', 'CHEM', 'CS', 'ECON', 'EEE', 'HUM', 'MATH', 'MECH', 'PHY']
 
 def get_department_cdc_list(dept, file):
-    df = pd.read_excel(file,'CDC')
+    # df = pd.read_excel(file,'CDC')
+    df = pd.read_excel(file,'CDC', dtype={'L P U': str})
     df.replace(np.nan,0)
     Lst=[]
     for i in range(0, df.shape[0]):
@@ -42,16 +43,19 @@ def get_department_cdc_list(dept, file):
             Lst.append([
                 df['course no'][i],
                 df['course title'][i],
-                0 if math.isnan(df['L'][i]) else df['L'][i],
-                0 if math.isnan(df['T'][i]) else df['T'][i],
-                0 if math.isnan(df['P'][i]) else df['P'][i],
-                0 if math.isnan(df['comcode'][i]) else df['comcode'][i],
+                0 if not isinstance(df['L'][i], int) or math.isnan(df['L'][i]) else df['L'][i],
+                0 if not isinstance(df['T'][i], int) or math.isnan(df['T'][i]) else df['T'][i],
+                0 if not isinstance(df['P'][i], int) or math.isnan(df['P'][i]) else df['P'][i],
+                0 if not isinstance(df['comcode'][i], int) or math.isnan(df['comcode'][i]) else df['comcode'][i],
                 None if type(df['equivalent'][i]) is not str else df['equivalent'][i],
+                str(df['L P U'][i]),
+                str(df['sem'][i])
             ])
     return Lst
 
 def get_department_elective_list(dept, file):
-    dfe= pd.read_excel(file,'ELECTIVE')
+    # dfe= pd.read_excel(file,'ELECTIVE')
+    dfe= pd.read_excel(file,'ELECTIVE', dtype={'L P U': str})
     Dict={}
     for i in range(0, dfe.shape[0]):
         if(dfe['Disc'][i]=='B.E (Electronics & Instrumentation)' or dfe['Disc'][i]=='B.E. (Electrical & Electronics)'):
@@ -84,15 +88,16 @@ def get_department_elective_list(dept, file):
             Lst.append([
                 dfe['Course No'][i],
                 dfe['Course Title'][i],
-                0 if math.isnan(dfe['com code'][i]) else dfe['com code'][i],
+                0 if not isinstance(dfe['com code'][i], int) or math.isnan(dfe['com code'][i]) else dfe['com code'][i],
                 None if type(dfe['equivalent'][i]) is not str else dfe['equivalent'][i],
+                dfe['L P U'][i],
             ])
     return Lst
 
 def get_department_instructor_list(dept, file):
     dff= pd.read_excel(file,'FACULTY')
     Lst=[]
-    for i in range(0, 176):
+    for i in range(0, dff.shape[0]):
         if(dff['discipline'][i]==dept):
             Lst.append([dff['name'][i],dff['PSRN'][i]])
     return Lst
@@ -101,25 +106,25 @@ def get_department_phd_student_list(dept, file):
     dfs= pd.read_excel(file,'RESEARCH SCHOLAR')
     Lst=[]
     if(dept=='HSS' or dept=='HUM'):
-        for i in range(0, 420):
+        for i in range(0, dfs.shape[0]):
             if(dfs['discipline'][i]=='HSS' or dfs['discipline'][i]=='HUM'):
-                Lst.append([dfs['name'][i],dfs['IDNO'][i]])
+                Lst.append([dfs['name'][i],dfs['IDNO'][i],dfs['system id'][i]])
     else:
-        for i in range(0, 420):
+        for i in range(0, dfs.shape[0]):
             if(dfs['discipline'][i][0:3]==dept[0:3]):
                 if(dept=='CHE'):
                     if(dfs['discipline'][i]=='CHE' or dfs['discipline'][i]=='CHEMISTRY'):
-                        Lst.append([dfs['name'][i],dfs['IDNO'][i]])
+                        Lst.append([dfs['name'][i],dfs['IDNO'][i],dfs['system id'][i]])
                 elif(dept=='CHEM'):
                     if(dfs['discipline'][i]=='CHEM' or dfs['discipline'][i]=='CHEMICAL'):
-                        Lst.append([dfs['name'][i],dfs['IDNO'][i]])
+                        Lst.append([dfs['name'][i],dfs['IDNO'][i],dfs['system id'][i]])
                 else:
-                    Lst.append([dfs['name'][i],dfs['IDNO'][i]])
+                    Lst.append([dfs['name'][i],dfs['IDNO'][i],dfs['system id'][i]])
     return Lst
 
 def get_instructor_list(file):
     dff= pd.read_excel(file,'FACULTY')
     Lst=[]
-    for i in range(0,176):
+    for i in range(0, dff.shape[0]):
         Lst.append([dff['name'][i],dff['PSRN'][i]])
     return Lst
