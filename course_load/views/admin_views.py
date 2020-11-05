@@ -11,11 +11,11 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from course_load.forms import *
-from course_load.models import Course, Instructor, CourseInstructor
-from course_load.models import PortalSettings
+from course_load.models import Course, Instructor, CourseInstructor, CourseHistory, PortalSettings
 
 from AUGSD_time_table_project.settings import MEDIA_ROOT, BASE_DIR
 from populate import populate_from_admin_data
+from course_load.utils import get_equivalent_course_info
 
 
 @method_decorator(login_required, name='dispatch')
@@ -299,6 +299,38 @@ def get_instructor_preview(request):
         }
     return JsonResponse(data)
 
+@login_required
+def get_course_history(request):
+    response = {
+        'history': [],
+        'error': False,
+        'message': 'success'
+    }
+    if request.user.is_superuser:
+        course_code = request.GET.get('course_code', None)
+        try:
+            course = Course.objects.get(code = course_code)
+            course_history = CourseHistory.objects.filter(course = course)
+            for entry in course_history:
+                response['history'].append(
+                    {
+                        'time': entry.created,
+                        'l_count': entry.l_count,
+                        't_count': entry.t_count,
+                        'p_count': entry.p_count,
+                        'max_strength_per_l': entry.max_strength_per_l,
+                        'max_strength_per_t': entry.max_strength_per_t,
+                        'max_strength_per_p': entry.max_strength_per_p,
+                        'enable': entry.enable
+                    }
+                )
+        except Exception as e:
+            response['history'] = []
+            response['error'] = True
+            response['message'] = str(e)
+    else: 
+        response['message'] = "superuser required"
+    return JsonResponse(response)
 
 @login_required
 def download_erp(request):
@@ -310,32 +342,32 @@ def download_erp(request):
         course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
-
             ic = course.ic
+            print(ic.instructor_type)
             ic_printed = False
             l_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'L')
             for entry in l_entry_list:
                 if ic_printed:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'I'])
                 else:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'IC'])
                 ic_printed = True
             t_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'T')
             for entry in t_entry_list:
                 if ic_printed:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'I'])
                 else:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'IC'])
                 ic_printed = True
             p_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'P')
             for entry in p_entry_list:
                 if ic_printed:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'I'])
                 else:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id, 'IC'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'IC'])
                 ic_printed = True
             if not ic_printed:
-                writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name, ic.psrn_or_id, 'IC'])
+                writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name, ic.psrn_or_id if ic.instructor_type == 'F' else ic.system_id, 'IC'])
               
             instructor_list = CourseInstructor.objects.filter(course = course).values('instructor').distinct().order_by('instructor__instructor_type', 'instructor')
             for instructor in instructor_list:
@@ -344,13 +376,13 @@ def download_erp(request):
                 instructor = Instructor.objects.get(psrn_or_id = instructor['instructor'])
                 l_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'L').order_by('section_number')
                 for entry in l_entry_list:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id if instructor.instructor_type == 'F' else instructor.system_id, 'I'])
                 t_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'T').order_by('section_number')
                 for entry in t_entry_list:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id if instructor.instructor_type == 'F' else instructor.system_id, 'I'])
                 p_entry_list = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'P').order_by('section_number')
                 for entry in p_entry_list:
-                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id, 'I'])
+                    writer.writerow([course.comcode, course.code, course.name, entry.section_type, entry.section_number, instructor.name, instructor.psrn_or_id if instructor.instructor_type == 'F' else instructor.system_id, 'I'])
         return response
     else:
         return HttpResponseRedirect('/course-load/dashboard')
@@ -361,7 +393,7 @@ def download_time_table(request):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="Course Load timetable.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor names'])
+        writer.writerow(['Comcode', 'Course number', 'Course title', 'L P U', 'Section type', 'Section number', 'Instructor names'])
         course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
@@ -369,7 +401,7 @@ def download_time_table(request):
             ic_printed = False;
             ic = course.ic
             if CourseInstructor.objects.filter(course = course, instructor = ic).count() == 0:
-                writer.writerow([course.comcode, course.code, course.name, 'R', '1', ic.name])
+                writer.writerow([course.comcode, course.code, course.name, course.lpu, 'R', '1', ic.name])
 
             l_count = CourseInstructor.objects.filter(course = course, section_type = 'L').values('section_number').distinct().count()
             t_count = CourseInstructor.objects.filter(course = course, section_type = 'T').values('section_number').distinct().count()
@@ -388,7 +420,7 @@ def download_time_table(request):
                 for course_instructor in course_instructor_list:
                     instructor_str += (course_instructor.instructor.name.title()+'/ ')
                 instructor_str = instructor_str[:-2]
-                writer.writerow([course.comcode, course.code, course.name, 'L', sec, instructor_str])
+                writer.writerow([course.comcode, course.code, course.name, course.lpu, 'L', sec, instructor_str])
             for sec in range(1, t_count+1):
                 instructor_str = ""
                 has_ic = CourseInstructor.objects.filter(course = course, section_type = 'T', section_number = sec, instructor = ic)
@@ -402,7 +434,7 @@ def download_time_table(request):
                 for course_instructor in course_instructor_list:
                     instructor_str += (course_instructor.instructor.name.title()+'/ ')
                 instructor_str = instructor_str[:-2]
-                writer.writerow([course.comcode, course.code, course.name, 'T', sec, instructor_str])
+                writer.writerow([course.comcode, course.code, course.name, course.lpu, 'T', sec, instructor_str])
             for sec in range(1, p_count+1):
                 instructor_str = ""
                 has_ic = CourseInstructor.objects.filter(course = course, section_type = 'P', section_number = sec, instructor = ic)
@@ -416,10 +448,56 @@ def download_time_table(request):
                 for course_instructor in course_instructor_list:
                     instructor_str += (course_instructor.instructor.name.title()+', ')
                 instructor_str = instructor_str[:-2]
-                writer.writerow([course.comcode, course.code, course.name, 'P', sec, instructor_str])
+                writer.writerow([course.comcode, course.code, course.name, course.lpu, 'P', sec, instructor_str])
         return response
     else:
         return HttpResponseRedirect('/course-load/dashboard')
+
+@login_required
+def download_instructor_wise_compressed(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Course Load instructor-wise.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Deptartment', 'PSRN/ID', 'Instructor name', 'Course number', 'Course title', 'L', 'T', 'P', 'Role'])
+    instructor_list = None
+    if request.user.is_superuser:
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True).values_list('ic', flat=True).distinct())
+        instructor_list = instructor_list_1 + instructor_list_2
+        instructor_list = list(set(instructor_list))
+    else:
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor__department = request.user.userprofile.department).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True, ic__department = request.user.userprofile.department).values_list('ic', flat=True).distinct())
+        instructor_list = instructor_list_1 + instructor_list_2
+        instructor_list = list(set(instructor_list))
+    instructor_list = Instructor.objects.filter(psrn_or_id__in = instructor_list).order_by('department', 'instructor_type', 'psrn_or_id')
+    for instructor in instructor_list:
+        course_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor = instructor).values_list('course', flat=True).distinct())
+        course_list_2 = list(Course.objects.filter(enable = True, ic = instructor).values_list('code', flat=True).distinct())
+        course_list = course_list_1 + course_list_2
+        course_list = list(set(course_list))
+        printed_set = set()
+        for course in course_list:
+            course = Course.objects.get(code = course)
+            if course.code in printed_set:
+                continue
+            equivalent_course_list = get_equivalent_course_info(course.code)
+            for i in equivalent_course_list:
+                printed_set.add(i['code'])
+            l_count = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'L').count()
+            t_count = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'T').count()
+            p_count = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'P').count()
+            role = 'I'
+            if course.ic == instructor:
+                role = 'IC'
+            if len(equivalent_course_list) == 1:
+                writer.writerow([instructor.department, instructor.psrn_or_id, instructor.name, course.code, course.name, l_count, t_count, p_count, role])
+            else:
+                combined_code = equivalent_course_list[0]['code']
+                for i in range(1, len(equivalent_course_list)):
+                    combined_code = combined_code+' / '+equivalent_course_list[i]['code']
+                writer.writerow([instructor.department, instructor.psrn_or_id, instructor.name, combined_code, course.name, l_count, t_count, p_count, role])
+    return response
 
 @method_decorator(login_required, name='dispatch')
 class UploadInitialData(View):

@@ -10,8 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views import generic, View
 
 from course_load.forms import CommentFileForm
-from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested
-from course_load.models import PortalSettings
+from course_load.models import Department, Course, Instructor, CourseInstructor, CourseAccessRequested, CourseHistory, PortalSettings
 from course_load.utils import get_department_list, get_equivalent_course_info
 
 # Only for testing
@@ -75,19 +74,21 @@ def get_data(request, *args, **kwargs):
         other_elective_list = Course.objects.filter(course_type = 'E').difference(department_elective_list).difference(requested_elective_list)
         faculty_list_1 = Instructor.objects.filter(department = dept, instructor_type = 'F')
         faculty_list_2 = Instructor.objects.filter(department = dept, instructor_type = 'S')
-        faculty_list_3 = Instructor.objects.filter(instructor_type = 'F').exclude(department = dept)
+        faculty_list_3 = Instructor.objects.filter(department = dept, instructor_type = 'M')
+        faculty_list_4 = Instructor.objects.filter(instructor_type = 'F').exclude(department = dept)
 
-        department_cdc_list = list(department_cdc_list.values('name', 'code', 'enable'))
-        department_elective_list = list(department_elective_list.values('name', 'code', 'enable'))
-        requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'enable'))
-        requested_elective_list = list(requested_elective_list.values('name', 'code', 'enable'))
+        department_cdc_list = list(department_cdc_list.values('name', 'code', 'enable', 'sem'))
+        department_elective_list = list(department_elective_list.values('name', 'code', 'enable', 'sem'))
+        requested_cdc_list = list(requested_cdc_list.values('name', 'code', 'enable', 'sem'))
+        requested_elective_list = list(requested_elective_list.values('name', 'code', 'enable', 'sem'))
 
-        other_cdc_list = list(other_cdc_list.values('name', 'code'))
-        other_elective_list = list(other_elective_list.values('name', 'code'))
+        other_cdc_list = list(other_cdc_list.values('name', 'code', 'sem'))
+        other_elective_list = list(other_elective_list.values('name', 'code', 'sem'))
         faculty_list_1 = list(faculty_list_1.values('name', 'psrn_or_id'))
         faculty_list_2 = list(faculty_list_2.values('name', 'psrn_or_id'))
         faculty_list_3 = list(faculty_list_3.values('name', 'psrn_or_id'))
-        faculty_list = faculty_list_1 + faculty_list_2 + faculty_list_3
+        faculty_list_4 = list(faculty_list_4.values('name', 'psrn_or_id'))
+        faculty_list = faculty_list_1 + faculty_list_2 + faculty_list_3 + faculty_list_4
         response['data'] = {
             'department_cdc_list': department_cdc_list,
             'department_elective_list': department_elective_list,
@@ -215,6 +216,7 @@ def submit_data(request, *args, **kwargs):
             course.max_strength_per_p = data['max_strength_per_p']
             course.ic = Instructor.objects.get(psrn_or_id = data['ic'])
             course.save(update_fields=['enable', 'past_course_strength', 'l_count', 't_count', 'p_count', 'max_strength_per_l', 'max_strength_per_t', 'max_strength_per_p', 'ic'])
+            CourseHistory.objects.create(course = course, l_count = data['l_count'], t_count = data['t_count'], p_count = data['p_count'], max_strength_per_l = data['max_strength_per_l'], max_strength_per_t = data['max_strength_per_t'], max_strength_per_p = data['max_strength_per_p'], ic = course.ic, enable = data['enable'])
 
             CourseInstructor.objects.filter(course = course).delete()
             l = data['l']
@@ -270,6 +272,7 @@ def clear_course(request, *args, **kwargs):
             course.ic = None
             course.save(update_fields=['max_strength_per_l', 'max_strength_per_t', 'max_strength_per_p', 'ic'])
             CourseInstructor.objects.filter(course = course).delete()
+            CourseHistory.objects.create(course = course, l_count = 0, t_count = 0, p_count = 0, max_strength_per_l = 0, max_strength_per_t = 0, max_strength_per_p = 0, ic = None, enable = course.enable)
 
         response['error'] = False
         response['message'] = 'success'
