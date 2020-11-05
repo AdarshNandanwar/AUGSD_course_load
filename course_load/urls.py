@@ -23,4 +23,5 @@ urlpatterns = [
     path('upload-initial-data/', admin_views.UploadInitialData.as_view()),
     path('upload-past-course-strength-data/', admin_views.UploadPastCourseStrengthData.as_view()),
     path('get-course-history/', admin_views.get_course_history),
+    path('course-history/', admin_views.ViewCourseHistory.as_view()),
 ]

@@ -610,3 +610,13 @@ def download_past_course_strength_data_template(request):
             return response
     else:
         return HttpResponseRedirect('/course-load/dashboard')
+
+@method_decorator(login_required, name='dispatch')
+class ViewCourseHistory(View):
+    template_name = 'admin/view-course-history.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return render(request, self.template_name, {})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
