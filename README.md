@@ -20,7 +20,17 @@ git clone https://github.com/AdarshNandanwar/augsd-course-load.git
     ```bash
     pip install -r requirements.txt
     ```
-3. Set up all environment variables
+3. Initial setup
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    python populate.py
+    cd client
+    npm install
+    npm run build
+    cd ..
+    ```
+4. Set up all environment variables
     ```
     export SECRET_KEY=""
     export DEBUG_VALUE="True"
