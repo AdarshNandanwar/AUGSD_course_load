@@ -76,6 +76,13 @@
 	}
 	getCourse()
 
+	const addZero = (i) => {
+		if (i < 10) {
+			i = "0" + i;
+		}
+		return i;
+	}
+
 	const formEl = document.querySelector('form').addEventListener('submit', async e => {
 		e.preventDefault();
 		const selectedValue = document.querySelector('#course_code').value;
@@ -100,7 +107,7 @@
 				const htmlRow = `
 				<tr>
 					<th scope="row">${ind + 1}</th>
-					<td>${changeDate.toLocaleDateString("en-US")}</td>
+					<td>${changeDate.toLocaleDateString("en-US")} - ${addZero(changeDate.getHours())}:${addZero(changeDate.getMinutes())}</td>
 					<td>${obj.l_count}</td>
 					<td>${obj.t_count}</td>
 					<td>${obj.p_count}</td>
