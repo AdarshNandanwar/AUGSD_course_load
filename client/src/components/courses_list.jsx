@@ -77,6 +77,16 @@ export default function SimpleTabs(props) {
   const [extraElective, setExtraElective] = React.useState(null);
   const [extraCourseStatus, setExtraCourseStatus] = React.useState(null);
 
+  // get month in ist format
+  var currentTime = new Date();
+  var currentOffset = currentTime.getTimezoneOffset();
+  var ISTOffset = 330; // IST offset UTC +5:30
+  var ISTTime = new Date(
+    currentTime.getTime() + (ISTOffset + currentOffset) * 60000
+  );
+  const monthNumber = ISTTime.getMonth();
+  const semester = monthNumber == 11 || monthNumber < 5 ? 2 : 1;
+
   // const handleNewCDC_change = (e, v) => {
   // 	setExtraCDC(v);
   // };
@@ -97,11 +107,14 @@ export default function SimpleTabs(props) {
   const CDC = [
     ...props.state.department_cdc_list,
     ...props.state.requested_cdc_list,
-  ];
+  ].filter((course) => course.sem == "sem" + semester);
   const Electives = [
     ...props.state.department_elective_list,
     ...props.state.requested_elective_list,
   ];
+
+  // console.log(CDC, "cdc");
+  // console.log(Electives, "electives");
 
   const sortFunction = (a, b) => {
     return a.code.localeCompare(b.code);

@@ -4,14 +4,118 @@
 
 {% block content %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"></script>
+
 <div class="text-left">
 	<a class="m-4" href="/course-load/dashboard">Back</a>
 </div>
 <div class="text-center">
 	<h3>View Course History</h3>
 	<div class="m-3">
-		<p>Add form here</p>
+		<form>
+			<!-- <label>Couse Code/Name</label> -->
+			<!-- <input type="text" name="course_filter" id="course_filter"> -->
+			<label style="font-weight:bold;font-size:20px" for="course_code">Select course</label>
+			<select name="course_code" id="course_code" style="width:50%; margin: 10px 20px;">
+			</select>
+			<button type="submit"
+				style="padding:5px 20px; border: 1px solid pink; border-radius:10px;font-weight: bold;">Submit</button>
+		</form>
+	</div>
+	<div style="width:100%; overflow:auto;">
+		<table class="table table-stripped table-bordered">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Time</th>
+					<th scope="col">l_count</th>
+					<th scope="col">t_count</th>
+					<th scope="col">p_count</th>
+					<th scope="col">max_strength_per_l</th>
+					<th scope="col">max_strength_per_t</th>
+					<th scope="col">max_strength_per_p</th>
+					<th scope="col">enable</th>
+				</tr>
+			</thead>
+			<tbody id="table_body">
+				<!-- <tr>
+					<th scope="row">1</th>
+					<td>Mark</td>
+					<td>Otto</td>
+					<td>@mdo</td>
+				</tr> -->
+			</tbody>
+		</table>
 	</div>
 </div>
-	
+
+<style>
+	button:hover {
+		background: pink;
+		color: white;
+		transition: 300ms;
+	}
+</style>
+
+<script>
+	const getCourse = async () => {
+		try {
+			const res = await axios.get('/course-load/get-data/');
+			const courses = [...res.data.data.other_cdc_list, ...res.data.data.other_elective_list]
+			courses.sort((a, b) => a.code.localeCompare(b.code));
+			const selectElement = document.getElementById("course_code");
+			courses.forEach(course => {
+				const option = document.createElement("option");
+				option.text = course.code + ' (' + course.name + ')';
+				option.value = course.code;
+				selectElement.add(option);
+			})
+		} catch (err) {
+			console.log(err)
+		}
+	}
+	getCourse()
+
+	const formEl = document.querySelector('form').addEventListener('submit', async e => {
+		e.preventDefault();
+		const selectedValue = document.querySelector('#course_code').value;
+		try {
+			const res = await axios.get('/course-load/get-course-history/?course_code=' + selectedValue);
+			console.log(res.data)
+			const historyArray = res?.data?.history;
+			// historyObj = {
+			// 	l_count
+			// 	t_count
+			// 	p_count
+			// 	max_strength_per_l
+			// 	max_strength_per_t
+			// 	max_strength_per_p
+			// 	enable
+			// 	time (int string formal)
+			// }
+			const tableBody = document.getElementById('table_body');
+			tableBody.innerHTML = ""
+			historyArray.forEach((obj, ind) => {
+				const changeDate = new Date(obj.time);
+				const htmlRow = `
+				<tr>
+					<th scope="row">${ind + 1}</th>
+					<td>${changeDate.toLocaleDateString("en-US")}</td>
+					<td>${obj.l_count}</td>
+					<td>${obj.t_count}</td>
+					<td>${obj.p_count}</td>
+					<td>${obj.max_strength_per_l}</td>
+					<td>${obj.max_strength_per_t}</td>
+					<td>${obj.max_strength_per_p}</td>
+					<td>${obj.enable ? 'True' : 'False'}</td>
+				</tr>
+				`;
+				tableBody.innerHTML += htmlRow;
+			})
+		} catch (err) {
+			console.log(err)
+		}
+	})
+</script>
+
 {% endblock %}
