@@ -573,11 +573,15 @@ class UploadPastCourseStrengthData(View):
 
                     print("Populating past course capacity")
                     try:
-                        df= pd.read_excel(request.user.userprofile.past_course_strength_data_file.url, 'sheet1', skiprows=1, usecols=['Subject', 'Catalog No.'])
-                        df['course_code'] = df['Subject'].str.cat(df['Catalog No.'], sep =" ") 
-                        df['size'] = df.groupby(['Subject', 'Catalog No.']).transform(np.size)
-                        df = df[['course_code', 'size']]
-                        df = df.drop_duplicates('course_code')
+                        cap = pd.read_excel(request.user.userprofile.past_course_strength_data_file.url, 'sheet1', skiprows=1, usecols=['Subject', 'Catalog', 'Section', 'Tot Enrl'])
+                        cap['Catalog'] = cap['Catalog'].str.strip()
+                        cap['Section'] = cap['Section'].apply(lambda x: x[0])
+                        df = pd.DataFrame()
+                        cc = cap['Subject'] + " " + cap['Catalog'] + cap['Section']
+                        df['course_code'] = cc.unique()
+                        df['size'] = cap.groupby(['Subject', 'Catalog', 'Section'])['Tot Enrl'].sum().reset_index()['Tot Enrl']
+                        df['course_code'] = df['course_code'].apply(lambda x: x[:-1])
+                        df = df.drop_duplicates()
                         for ind in df.index:
                             Course.objects.filter(code = df['course_code'][ind].upper()).update(past_course_strength = df['size'][ind])
                     except Exception as e:
