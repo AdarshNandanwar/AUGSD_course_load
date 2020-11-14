@@ -43,10 +43,10 @@ def get_department_cdc_list(dept, file):
             Lst.append([
                 df['course no'][i],
                 df['course title'][i],
-                0 if not isinstance(df['L'][i], int) or math.isnan(df['L'][i]) else df['L'][i],
-                0 if not isinstance(df['T'][i], int) or math.isnan(df['T'][i]) else df['T'][i],
-                0 if not isinstance(df['P'][i], int) or math.isnan(df['P'][i]) else df['P'][i],
-                0 if not isinstance(df['comcode'][i], int) or math.isnan(df['comcode'][i]) else df['comcode'][i],
+                0 if (not isinstance(df['L'][i], int) and not isinstance(df['L'][i], float)) or math.isnan(df['L'][i]) else int(df['L'][i]),
+                0 if (not isinstance(df['T'][i], int) and not isinstance(df['T'][i], float)) or math.isnan(df['T'][i]) else int(df['T'][i]),
+                0 if (not isinstance(df['P'][i], int) and not isinstance(df['P'][i], float)) or math.isnan(df['P'][i]) else int(df['P'][i]),
+                0 if (not isinstance(df['comcode'][i], int) and not isinstance(df['comcode'][i], float)) or math.isnan(df['comcode'][i]) else int(df['comcode'][i]),
                 None if type(df['equivalent'][i]) is not str else df['equivalent'][i],
                 str(df['L P U'][i]),
                 str(df['sem'][i])
