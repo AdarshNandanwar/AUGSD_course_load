@@ -107,8 +107,7 @@ export default function SimpleTabs(props) {
   const CDC = [
     ...props.state.department_cdc_list,
     ...props.state.requested_cdc_list,
-  // ].filter((course) => course.sem == "sem" + semester || course.sem == "sem12");
-  ].filter((course) => course.sem == "sem" + semester);
+  ].filter((course) => (course.sem == "sem" + semester) || (course.sem == "sem12"));
   const Electives = [
     ...props.state.department_elective_list,
     ...props.state.requested_elective_list,
