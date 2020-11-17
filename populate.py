@@ -106,6 +106,8 @@ def create_course(file):
                 except Exception as e:
                     print('SKIPPED: ', cdc[0], ' [', cdc[1], "] cdc is already in db ("+str(e)+")")
                     pass
+        for i in dept_list:
+            dept = Department.objects.get(code = i)
             department_elective_list = get_department_elective_list(i, file)
             for elective in department_elective_list:
                 parent_course = None
