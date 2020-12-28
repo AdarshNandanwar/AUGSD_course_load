@@ -38,6 +38,8 @@ class TogglePortal(View):
                 form = self.form_class(request.POST)
                 if form.is_valid():
                     PortalSettings.objects.filter().update(is_portal_active=form.cleaned_data["is_portal_active"])
+                    if form.cleaned_data["disable_all_courses"] is True:
+                        Course.objects.filter().update(enable=False)
                     messages.success(request, "Portal toggled successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.error(request, "Error occured.", extra_tags='alert-danger')

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 class PortalSettings(models.Model):
     is_portal_active = models.BooleanField(default=False)
+    disable_all_courses = models.BooleanField(default=False)
 
     def __str__(self):
         return "settings"
@@ -51,7 +52,7 @@ class Course(models.Model):
     max_strength_per_l = models.IntegerField(default=0)
     max_strength_per_t = models.IntegerField(default=0)
     max_strength_per_p = models.IntegerField(default=0)
-    ic = models.ForeignKey(Instructor, default=None, on_delete=models.SET_DEFAULT, null = True)
+    ic = models.ForeignKey(Instructor, default=None, on_delete=models.SET_DEFAULT, null = True, blank=True)
     department = models.ForeignKey(Department, default=None, on_delete=models.CASCADE)
     COURSE_TYPES = (
         ('C', 'CDC'),

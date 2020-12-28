@@ -5,9 +5,10 @@ from .models import PortalSettings
 class TogglePortalForm(forms.ModelForm):
     class Meta:  
         model = PortalSettings  
-        fields = ['is_portal_active']
+        fields = ['is_portal_active', 'disable_all_courses']
         labels = {
             "is_portal_active": "Activate portal",
+            "disable_all_courses": "Disable all courses"
         }
 
 class CommentFileForm(forms.ModelForm):
