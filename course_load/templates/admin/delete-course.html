@@ -59,6 +59,32 @@
 					<input readonly type="text" name="old_merge_with" maxlength="10" class="textinput textInput form-control" required="" id="id_old_merge_with">
 				</div>
 			</div>
+			<div id="div_id_old_past_course_strength" class="form-group"> 
+				<label for="id_old_past_course_strength" class="">
+					Past course strength
+				</label> 
+				<div class=""> 
+					<input readonly type="number" name="old_past_course_strength" class="numberinput form-control" id="id_old_past_course_strength"> 
+				</div> 
+			</div>
+			<div id="div_id_old_sem" class="form-group">
+				<label for="id_old_sem" class=" requiredField">
+					Semesters
+					<span class="asteriskField">*</span>
+				</label>
+				<div class="">
+					<input readonly type="text" name="old_sem" maxlength="10" class="textinput textInput form-control" required="" id="id_old_sem">
+				</div>
+			</div>
+			<div id="div_id_old_lpu" class="form-group">
+				<label for="id_old_lpu" class=" requiredField">
+					LPU
+					<span class="asteriskField">*</span>
+				</label>
+				<div class="">
+					<input readonly type="text" name="old_lpu" maxlength="10" class="textinput textInput form-control" required="" id="id_old_lpu">
+				</div>
+			</div>
 			<input class="btn btn-dark" type="submit" value="Submit">
 		</form>
 	</div>
@@ -90,6 +116,17 @@
 					$("#id_old_course_type").val(data.course_type);
 				}
 				$("#id_old_merge_with").val(data.merge_with);
+				$("#id_old_past_course_strength").val(data.past_course_strength);
+				if(data.sem == 'sem1'){
+					$("#id_old_sem").val("Odd");
+				} else if(data.sem == 'sem2'){
+					$("#id_old_sem").val("Even");
+				} else if(data.sem == 'sem12'){
+					$("#id_old_sem").val("Both");
+				} else {
+					$("#id_old_sem").val(data.sem);
+				}
+				$("#id_old_lpu").val(data.lpu);
 			}
 		});
 	});

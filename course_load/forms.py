@@ -37,10 +37,12 @@ class PastCourseStrengthFileForm(forms.ModelForm):
 class AddCourseForm(forms.ModelForm):
     class Meta:  
         model = Course  
-        fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with']
+        fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']
         labels = {
             'code': 'Course number',
-            'name': 'Course title'
+            'name': 'Course title',
+            'sem': 'Semesters',
+            'lpu': 'LPU'
         }
 
 class AddInstructorForm(forms.ModelForm):
@@ -54,10 +56,12 @@ class AddInstructorForm(forms.ModelForm):
 class UpdateCourseForm(forms.ModelForm):
     class Meta:  
         model = Course  
-        fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with']
+        fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']
         labels = {
             'code': 'Course number',
-            'name': 'Course title'
+            'name': 'Course title',
+            'sem': 'Semesters',
+            'lpu': 'LPU'
         }
 
 class UpdateInstructorForm(forms.ModelForm):

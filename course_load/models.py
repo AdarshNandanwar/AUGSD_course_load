@@ -62,7 +62,12 @@ class Course(models.Model):
     past_course_strength = models.IntegerField(null = True, blank = True)
     enable = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
-    sem = models.CharField(max_length = 5, null = True, blank = True)
+    SEM_TYPES = (
+        ('sem1', 'Odd'),
+        ('sem2', 'Even'),
+        ('sem12', 'Both')
+    )
+    sem = models.CharField(max_length = 5, choices=SEM_TYPES, null = False, blank = False, default='sem12')
     lpu = models.CharField(max_length = 20, null = False, blank = False, default='0 0 0')
 
     def __str__(self):
