@@ -10,36 +10,36 @@
 		<h6 class="mt-4 m-1">Download HOD comments: </h6>
 		{% for itr in comment_files %}
 		<div class="row p-1">
-			<div class="col-3">
+			<div class="col-2">
 				{{itr.name}}
 			</div>
-			<div class="col-9">
+			<div class="col-10">
 				<a href="{{itr.comment_file_url}}">{{itr.comment_file}}</a>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
-	<div class="col-4 text-left">
+	<div class="col-4 text-center">
 		<h6 class="mt-4">Add: </h6>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/add-course">Course</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/add-course">Course</a>
 		</p>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/add-instructor">Instructor</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/add-instructor">Instructor</a>
 		</p>
 		<h6 class="mt-4">Update: </h6>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/update-course">Course</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/update-course">Course</a>
 		</p>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/update-instructor">Instructor</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/update-instructor">Instructor</a>
 		</p>
 		<h6 class="mt-4">Delete: </h6>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/delete-course">Course</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/delete-course">Course</a>
 		</p>
 		<p class="mt-2">
-			<a style="width: 20%; min-width: 150px;" class="btn btn-dark" href="/delete-instructor">Instructor</a>
+			<a style="width: 60%; min-width: 150px;" class="btn btn-dark" href="/delete-instructor">Instructor</a>
 		</p>
 	</div>
 	<div class="col-12">

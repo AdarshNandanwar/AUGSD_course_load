@@ -12,7 +12,7 @@
 <div class="text-center">
 	<h3>Upload Initial Data</h3>
 	<div class="m-3">
-		<a class="btn btn-dark m-3" href="/course-load/download-data-template">Download Template</a>
+		<a class="btn btn-dark m-3" href="/course-load/download-data-template">Download Template <i class="fas fa-cloud-download-alt"></i></a>
 		<form id="target" class="m-1" action="/course-load/upload-initial-data/" method="post" enctype='multipart/form-data'>
 			{% csrf_token %}
 			<div class="text-danger">This will recreate the whole database. All existing data will be lost!</div>
@@ -20,7 +20,7 @@
 				{{ form.initial_data_file }}
 			</div>
 			<div class="text-danger">Be patient. This will take some time.</div>
-			<input class="m-2 btn btn-danger" type="submit" value="Submit">
+			<input class="m-2 btn btn-danger" type="submit" value="Submit" disabled>
 		</form>
 	</div>
 </div>

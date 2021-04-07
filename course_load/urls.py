@@ -19,6 +19,8 @@ urlpatterns = [
     path('download-format-5/', admin_views.download_instructor_wise_compressed),
     path('download-data-template/', admin_views.download_data_template),
     path('download-past-course-strength-data-template/', admin_views.download_past_course_strength_data_template),
+    path('download-course-data-template/', admin_views.download_course_data_template),
+    path('download-instructor-data-template/', admin_views.download_instructor_data_template),
     path('toggle-portal/', admin_views.TogglePortal.as_view()),
     path('upload-initial-data/', admin_views.UploadInitialData.as_view()),
     path('upload-past-course-strength-data/', admin_views.UploadPastCourseStrengthData.as_view()),

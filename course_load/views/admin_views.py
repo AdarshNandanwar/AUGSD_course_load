@@ -54,13 +54,15 @@ class TogglePortal(View):
 @method_decorator(login_required, name='dispatch')
 class AddCourse(View):
     form_class = AddCourseForm
+    form_class_bulk = AddCourseBulkForm
     initial = {'key': 'value'}
     template_name = 'admin/add-course.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             form = self.form_class(initial=self.initial)
-            return render(request, self.template_name, {'form': form})
+            form_bulk = self.form_class_bulk(initial=self.initial)
+            return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
 
@@ -68,6 +70,7 @@ class AddCourse(View):
         if request.user.is_superuser:
             try:
                 form = self.form_class(request.POST)
+                form_bulk = self.form_class_bulk(initial=self.initial)
                 if form.is_valid():
                     course, created = Course.objects.get_or_create(
                         code = form.cleaned_data['code'], 
@@ -83,24 +86,53 @@ class AddCourse(View):
                     messages.success(request, "Course added successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.error(request, "Error occured. Course not added.", extra_tags='alert-danger')
-                return render(request, self.template_name, {'form': form})
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
             except Exception as e:
                 print(e)
                 messages.error(request, "Error occured. Course not added.", extra_tags='alert-danger')
-                return render(request, self.template_name, {'form': form})
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+@method_decorator(login_required, name='dispatch')
+class AddCourseBulk(View):
+    form_class = AddCourseForm
+    form_class_bulk = AddCourseBulkForm
+    initial = {'key': 'value'}
+    template_name = 'admin/add-course.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(initial=self.initial)
+            form_bulk = self.form_class_bulk(request.POST, request.FILES)
+            try:
+                if form_bulk.is_valid():
+                    request.user.userprofile.course_file = request.FILES['course_file']
+                    request.user.userprofile.save()
+                    populate_from_admin_data(request.user.userprofile.course_file.url, clear_db = False, query = "course")
+                    messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
+                    return HttpResponseRedirect('/course-load/dashboard')
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
+            except Exception as e:
+                print(e)
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
 
 @method_decorator(login_required, name='dispatch')
 class AddInstructor(View):
     form_class = AddInstructorForm
+    form_class_bulk = AddInstructorBulkForm
     initial = {'key': 'value'}
     template_name = 'admin/add-instructor.html'
 
     def get(self, request, *args, **kwargs):
         if request.user.is_superuser:
             form = self.form_class(initial=self.initial)
-            return render(request, self.template_name, {'form': form})
+            form_bulk = self.form_class_bulk(initial=self.initial)
+            return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
 
@@ -108,6 +140,7 @@ class AddInstructor(View):
         if request.user.is_superuser:
             try:
                 form = self.form_class(request.POST)
+                form_bulk = self.form_class_bulk(initial=self.initial)
                 if form.is_valid():
                     instructor, created = Instructor.objects.get_or_create(
                         psrn_or_id = form.cleaned_data['psrn_or_id'], 
@@ -118,11 +151,38 @@ class AddInstructor(View):
                     messages.success(request, "Instructor added successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
                 messages.error(request, "Error occured. Instructor not added.", extra_tags='alert-danger')
-                return render(request, self.template_name, {'form': form})
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
             except Exception as e:
                 print(e)
                 messages.error(request, "Error occured. Instructor not added.", extra_tags='alert-danger')
-                return render(request, self.template_name, {'form': form})
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
+        else:
+            return HttpResponseRedirect('/course-load/dashboard')
+
+@method_decorator(login_required, name='dispatch')
+class AddInstructorBulk(View):
+    form_class = AddInstructorForm
+    form_class_bulk = AddInstructorBulkForm
+    initial = {'key': 'value'}
+    template_name = 'admin/add-instructor.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            form = self.form_class(initial=self.initial)
+            form_bulk = self.form_class_bulk(request.POST, request.FILES)
+            try:
+                if form_bulk.is_valid():
+                    request.user.userprofile.instructor_file = request.FILES['instructor_file']
+                    request.user.userprofile.save()
+                    populate_from_admin_data(request.user.userprofile.instructor_file.url, clear_db = False, query = "instructor")
+                    messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
+                    return HttpResponseRedirect('/course-load/dashboard')
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
+            except Exception as e:
+                print(e)
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                return render(request, self.template_name, {'form': form, 'form_bulk': form_bulk})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
 
@@ -532,10 +592,10 @@ class UploadInitialData(View):
                 if form.is_valid():
                     request.user.userprofile.initial_data_file = request.FILES['initial_data_file']
                     request.user.userprofile.save()
-                    populate_from_admin_data(request.user.userprofile.initial_data_file.url)
+                    populate_from_admin_data(request.user.userprofile.initial_data_file.url, clear_db = True)
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
-                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
             except Exception as e:
                 print(e)
@@ -543,20 +603,6 @@ class UploadInitialData(View):
                 return render(request, self.template_name, {'form': form})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
-
-@login_required
-def download_data_template(request):
-    if request.user.is_superuser:
-        path = BASE_DIR+'/'+'data_template.xlsx'
-        if os.path.exists(path):
-            with open(path, 'rb') as excel:
-                data = excel.read()
-
-            response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=data_template.xlsx'
-            return response
-    else:
-        return HttpResponseRedirect('/course-load/dashboard')
 
 @method_decorator(login_required, name='dispatch')
 class UploadPastCourseStrengthData(View):
@@ -602,7 +648,7 @@ class UploadPastCourseStrengthData(View):
 
                     messages.success(request, "Data uploaded successfully.", extra_tags='alert-success')
                     return HttpResponseRedirect('/course-load/dashboard')
-                messages.success(request, "Error occured. Data not updated.", extra_tags='alert-danger')
+                messages.error(request, "Error occured. Data not updated.", extra_tags='alert-danger')
                 return render(request, self.template_name, {'form': form})
             except Exception as e:
                 print(e)
@@ -611,20 +657,6 @@ class UploadPastCourseStrengthData(View):
         else:
             return HttpResponseRedirect('/course-load/dashboard')
 
-
-@login_required
-def download_past_course_strength_data_template(request):
-    if request.user.is_superuser:
-        path = BASE_DIR+'/'+'past_course_strength_data_template.xls'
-        if os.path.exists(path):
-            with open(path, 'rb') as excel:
-                data = excel.read()
-
-            response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=past_course_strength_data_template.xls'
-            return response
-    else:
-        return HttpResponseRedirect('/course-load/dashboard')
 
 @method_decorator(login_required, name='dispatch')
 class ViewCourseHistory(View):
@@ -635,3 +667,36 @@ class ViewCourseHistory(View):
             return render(request, self.template_name, {})
         else:
             return HttpResponseRedirect('/course-load/dashboard')
+
+
+# DOWNLOAD API
+
+@login_required
+def download_course_data_template(request):
+    return download_excel_file(request, 'course_data_template.xlsx')
+
+@login_required
+def download_instructor_data_template(request):
+    return download_excel_file(request, 'instructor_data_template.xlsx')
+
+@login_required
+def download_data_template(request):
+    return download_excel_file(request, 'data_template.xlsx')
+
+@login_required
+def download_past_course_strength_data_template(request):
+    return download_excel_file(request, 'past_course_strength_data_template.xls')
+
+@login_required
+def download_excel_file(request, file_name):
+    if request.user.is_superuser:
+        path = os.path.join(BASE_DIR, 'sample_data', file_name)
+        if os.path.exists(path):
+            with open(path, 'rb') as excel:
+                data = excel.read()
+
+            response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename='+file_name
+            return response
+    else:
+        return HttpResponseRedirect('/course-load/dashboard')

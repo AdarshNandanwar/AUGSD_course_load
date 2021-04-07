@@ -85,7 +85,7 @@ export default function SimpleTabs(props) {
     currentTime.getTime() + (ISTOffset + currentOffset) * 60000
   );
   const monthNumber = ISTTime.getMonth();
-  const semester = monthNumber >= 10 || monthNumber < 4 ? 2 : 1;
+  const semester = monthNumber >= 10 || monthNumber < 3 ? 2 : 1;
 
   // const handleNewCDC_change = (e, v) => {
   // 	setExtraCDC(v);
