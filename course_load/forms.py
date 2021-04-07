@@ -36,7 +36,8 @@ class PastCourseStrengthFileForm(forms.ModelForm):
         }
 
 class AddCourseForm(forms.ModelForm):
-    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'))
+    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'), required=False)
+    department = forms.ModelChoiceField(queryset=Department.objects.order_by('name'), required=True)
     class Meta:  
         model = Course  
         fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']
@@ -56,6 +57,7 @@ class AddCourseBulkForm(forms.ModelForm):
         }
 
 class AddInstructorForm(forms.ModelForm):
+    department = forms.ModelChoiceField(queryset=Department.objects.order_by('name'), required=True)
     class Meta:  
         model = Instructor  
         fields = ['psrn_or_id', 'name', 'department', 'instructor_type']
@@ -72,7 +74,8 @@ class AddInstructorBulkForm(forms.ModelForm):
         }
 
 class UpdateCourseForm(forms.ModelForm):
-    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'))
+    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'), required=False)
+    department = forms.ModelChoiceField(queryset=Department.objects.order_by('name'), required=True)
     class Meta:  
         model = Course  
         fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']
@@ -84,6 +87,7 @@ class UpdateCourseForm(forms.ModelForm):
         }
 
 class UpdateInstructorForm(forms.ModelForm):
+    department = forms.ModelChoiceField(queryset=Department.objects.order_by('name'), required=True)
     class Meta:  
         model = Instructor  
         fields = ['psrn_or_id', 'name', 'department', 'instructor_type']

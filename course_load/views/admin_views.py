@@ -101,6 +101,9 @@ class AddCourseBulk(View):
     initial = {'key': 'value'}
     template_name = 'admin/add-course.html'
 
+    def get(self, request, *args, **kwargs):
+            return HttpResponseRedirect('/add-course')
+
     def post(self, request, *args, **kwargs):
         if request.user.is_superuser:
             form = self.form_class(initial=self.initial)
@@ -165,6 +168,9 @@ class AddInstructorBulk(View):
     form_class_bulk = AddInstructorBulkForm
     initial = {'key': 'value'}
     template_name = 'admin/add-instructor.html'
+
+    def get(self, request, *args, **kwargs):
+            return HttpResponseRedirect('/add-instructor')
 
     def post(self, request, *args, **kwargs):
         if request.user.is_superuser:
