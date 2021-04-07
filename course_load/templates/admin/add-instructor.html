@@ -8,15 +8,29 @@
 	<a class="m-4" href="/course-load/dashboard">Back</a>
 </div>
 <div class="text-center">
-	<h1>Add Instructor</h1> 
-	<div class="col-8" style="margin: auto;">
-		<form class="m-5" action="/add-instructor/" method="post">
-			{% csrf_token %}
-			<table>
-			{{form|crispy}}
-			</table>
-			<input class="btn btn-dark" type="submit" value="Submit">
-		</form>
+	<h1 class="p-3">Add Instructor</h1>
+	<div class="row">
+		<div class="col-4" style="margin: auto; border-right: 1px solid rgb(206, 206, 206);">
+			<h2 class="p-3">Upload Instructor List</h2>
+			<form class="m-5" action="/add-instructor-bulk/" method="post" enctype='multipart/form-data'>
+				<a class="btn btn-dark m-3" href="/course-load/download-instructor-data-template">Download Template <i class="fas fa-cloud-download-alt"></i></a>
+				{% csrf_token %}
+				<table>
+				{{form_bulk|crispy}}
+				</table>
+				<input class="btn btn-dark" type="submit" value="Submit">
+			</form>
+		</div>
+		<div class="col-8" style="margin: auto;">
+			<h2 class="p-3">Fill Form</h2>
+			<form class="m-5" action="/add-instructor/" method="post">
+				{% csrf_token %}
+				<table>
+				{{form|crispy}}
+				</table>
+				<input class="btn btn-dark" type="submit" value="Submit">
+			</form>
+		</div>
 	</div>
 </div>
 

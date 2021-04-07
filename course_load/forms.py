@@ -24,7 +24,7 @@ class InitialDataFileForm(forms.ModelForm):
         model = UserProfile  
         fields = ['initial_data_file']
         labels = {
-            "initial_data_file": "Data File",
+            "initial_data_file": "Data file",
         }
 
 class PastCourseStrengthFileForm(forms.ModelForm):
@@ -36,6 +36,7 @@ class PastCourseStrengthFileForm(forms.ModelForm):
         }
 
 class AddCourseForm(forms.ModelForm):
+    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'))
     class Meta:  
         model = Course  
         fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']
@@ -46,6 +47,14 @@ class AddCourseForm(forms.ModelForm):
             'lpu': 'LPU'
         }
 
+class AddCourseBulkForm(forms.ModelForm):
+    class Meta:  
+        model = UserProfile  
+        fields = ['course_file']
+        labels = {
+            "course_file": "Data file",
+        }
+
 class AddInstructorForm(forms.ModelForm):
     class Meta:  
         model = Instructor  
@@ -54,7 +63,16 @@ class AddInstructorForm(forms.ModelForm):
             'psrn_or_id': 'PSRN/ID'
         }
 
+class AddInstructorBulkForm(forms.ModelForm):
+    class Meta:  
+        model = UserProfile  
+        fields = ['instructor_file']
+        labels = {
+            "instructor_file": "Data file",
+        }
+
 class UpdateCourseForm(forms.ModelForm):
+    merge_with = forms.ModelChoiceField(queryset=Course.objects.order_by('code'))
     class Meta:  
         model = Course  
         fields = ['code', 'name', 'comcode', 'department', 'course_type', 'merge_with', 'past_course_strength', 'sem', 'lpu']

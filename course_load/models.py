@@ -22,6 +22,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     department = models.ForeignKey(Department, default=None, on_delete=models.CASCADE, null=True)
     initial_data_file = models.FileField(null = True, blank = False)
+    course_file = models.FileField(null = True, blank = False)
+    instructor_file = models.FileField(null = True, blank = False)
     past_course_strength_data_file = models.FileField(null = True, blank = False)
 
     def __str__(self):
