@@ -15,7 +15,7 @@ from course_load.models import Course, Instructor, CourseInstructor, CourseHisto
 
 from AUGSD_time_table_project.settings import MEDIA_ROOT, BASE_DIR
 from populate import populate_from_admin_data
-from course_load.utils import get_equivalent_course_info
+from course_load.utils import get_equivalent_course_info, create_database_dump
 
 
 @method_decorator(login_required, name='dispatch')
@@ -679,30 +679,43 @@ class ViewCourseHistory(View):
 
 @login_required
 def download_course_data_template(request):
-    return download_excel_file(request, 'course_data_template.xlsx')
+    path = os.path.join(BASE_DIR, 'sample_data', 'course_data_template.xlsx')
+    return download_excel_file(request, path)
 
 @login_required
 def download_instructor_data_template(request):
-    return download_excel_file(request, 'instructor_data_template.xlsx')
+    path = os.path.join(BASE_DIR, 'sample_data', 'instructor_data_template.xlsx')
+    return download_excel_file(request, path)
 
 @login_required
 def download_data_template(request):
-    return download_excel_file(request, 'data_template.xlsx')
+    path = os.path.join(BASE_DIR, 'sample_data', 'data_template.xlsx')
+    return download_excel_file(request, path)
 
 @login_required
 def download_past_course_strength_data_template(request):
-    return download_excel_file(request, 'past_course_strength_data_template.xls')
+    path = os.path.join(BASE_DIR, 'sample_data', 'past_course_strength_data_template.xls')
+    return download_excel_file(request, path)
 
 @login_required
-def download_excel_file(request, file_name):
+def download_excel_file(request, path):
     if request.user.is_superuser:
-        path = os.path.join(BASE_DIR, 'sample_data', file_name)
         if os.path.exists(path):
+            file_name = os.path.basename(path)
             with open(path, 'rb') as excel:
                 data = excel.read()
-
             response = HttpResponse(data,content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = 'attachment; filename='+file_name
             return response
+    else:
+        return HttpResponseRedirect('/course-load/dashboard')
+
+@login_required
+def download_database_dump(request):
+    if request.user.is_superuser:
+        file_name = 'db.xlsx'
+        path = os.path.join(BASE_DIR, file_name)
+        create_database_dump(path)
+        return download_excel_file(request, path)
     else:
         return HttpResponseRedirect('/course-load/dashboard')

@@ -8,9 +8,11 @@ django-crispy-forms==1.9.0
 django-heroku==0.3.1
 django-storages==1.9.1
 docutils==0.15.2
+et-xmlfile==1.0.1
 gunicorn==20.0.4
 jmespath==0.9.5
 numpy==1.18.2
+openpyxl==3.0.7
 pandas==1.0.3
 psycopg2==2.8.4
 python-dateutil==2.8.1

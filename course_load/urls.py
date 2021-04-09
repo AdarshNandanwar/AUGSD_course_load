@@ -1,10 +1,12 @@
 from django.urls import path
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from course_load.views import (hod_views, shared_views, admin_views)
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     # path('dashboard/', login_required(TemplateView.as_view(template_name='index.html'))),
+    path('', lambda request: redirect('/course-load/dashboard', permanent=False)),
     path('dashboard/', hod_views.DashboardView.as_view()),
     path('get-data/', hod_views.get_data),
     path('get-course-data/', hod_views.get_course_data),
@@ -21,6 +23,7 @@ urlpatterns = [
     path('download-past-course-strength-data-template/', admin_views.download_past_course_strength_data_template),
     path('download-course-data-template/', admin_views.download_course_data_template),
     path('download-instructor-data-template/', admin_views.download_instructor_data_template),
+    path('download-database-dump/', admin_views.download_database_dump),
     path('toggle-portal/', admin_views.TogglePortal.as_view()),
     path('upload-initial-data/', admin_views.UploadInitialData.as_view()),
     path('upload-past-course-strength-data/', admin_views.UploadPastCourseStrengthData.as_view()),

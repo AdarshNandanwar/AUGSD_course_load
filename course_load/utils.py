@@ -6,8 +6,9 @@ import pandas as pd
 import numpy as np
 from pandas import ExcelWriter
 from pandas import ExcelFile
-from course_load.models import Course
+from course_load.models import Course, Instructor
 from collections import deque
+from openpyxl import Workbook
 
 def get_equivalent_course_info(code):
     course_list = []
@@ -129,3 +130,31 @@ def get_instructor_list(file):
     for i in range(0, dff.shape[0]):
         Lst.append([dff['name'][i],dff['PSRN'][i]])
     return Lst
+
+def create_database_dump(file_name):
+    workbook = Workbook()
+    cdc_sheet = workbook.active
+    cdc_sheet.title = 'CDC'
+    elective_sheet = workbook.create_sheet('ELECTIVE')
+    faculty_sheet = workbook.create_sheet('FACULTY')
+    phd_sheet = workbook.create_sheet('RESEARCH SCHOLAR')
+
+    cdc_sheet.append(['Course No', 'Comcode', 'Course title', 'Department', 'Equivalent', 'Semester'])
+    elective_sheet.append(['Course No', 'Comcode', 'Course Title', 'Department', 'Equivalent', 'Semester'])
+    faculty_sheet.append(['PSRN', 'Name', 'Department'])
+    phd_sheet.append(['PSRN', 'Name', 'Department', 'System ID'])
+    
+    course_list = Course.objects.filter().order_by('code')
+    for course in course_list:
+        if course.course_type == 'C':
+            cdc_sheet.append([course.code, course.comcode, course.name, course.department.name, course.merge_with.code if course.merge_with else '', course.sem])
+        else:
+            elective_sheet.append([course.code, course.comcode, course.name, course.department.name, course.merge_with.code if course.merge_with else '', course.sem])
+    instructor_list = Instructor.objects.filter().order_by('psrn_or_id')
+    for instructor in instructor_list:
+        if instructor.instructor_type == 'F':
+            faculty_sheet.append([instructor.psrn_or_id, instructor.name, instructor.department.name])
+        else:
+            phd_sheet.append([instructor.psrn_or_id, instructor.name, instructor.department.name, instructor.system_id])
+    
+    workbook.save(file_name)

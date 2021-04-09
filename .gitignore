@@ -2,6 +2,7 @@
 data.json
 new_data.json
 data_dump_*.json
+db.xlsx
 
 # exclude mediafiles
 mediafiles/*
