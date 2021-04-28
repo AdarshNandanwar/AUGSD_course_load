@@ -1,6 +1,6 @@
 # AUGSD Course Load Project
 
-The Course Load Project is a web portaal built to automate the process of course load generation in various format for the AUGSD office, BITS Pilani, K. K. Birla Goa Campus.
+The Course Load Project is a web portal built to automate the process of course load generation in various format for the AUGSD office, BITS Pilani, K. K. Birla Goa Campus.
 Frontend is built on React.js and backend using Django python. The database used is PostgreSQL. Hosted using Heroku and AWS.
 
 ## Installation
