@@ -1,10 +1,12 @@
 import csv
+import datetime
 import os
 import pandas as pd
 import numpy as np
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -416,11 +418,12 @@ def download_erp(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load ERP.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'Section type', 'Section number', 'Instructor name', 'PSRN/ID', 'Role'])
-        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
+        current_month = datetime.datetime.now().month
+        current_sem = 'sem2' if (current_month >= 11 or current_month < 4) else 'sem1'
+        course_list = Course.objects.filter(enable = True).filter(Q(sem = 'sem12')|Q(sem = current_sem)).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
             ic = course.ic
-            print(ic.instructor_type)
             ic_printed = False
             l_entry_list = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'L')
             for entry in l_entry_list:
@@ -471,7 +474,9 @@ def download_time_table(request):
         response['Content-Disposition'] = 'attachment; filename="Course Load timetable.csv"'
         writer = csv.writer(response)
         writer.writerow(['Comcode', 'Course number', 'Course title', 'L P U', 'Section type', 'Section number', 'Instructor names'])
-        course_list = Course.objects.filter(enable = True).values('code').distinct().order_by('code')
+        current_month = datetime.datetime.now().month
+        current_sem = 'sem2' if (current_month >= 11 or current_month < 4) else 'sem1'
+        course_list = Course.objects.filter(enable = True).filter(Q(sem = 'sem12')|Q(sem = current_sem)).values('code').distinct().order_by('code')
         for course in course_list:
             course = Course.objects.get(code = course['code'])
 
@@ -533,24 +538,26 @@ def download_time_table(request):
 @login_required
 def download_instructor_wise_compressed(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Course Load instructor-wise.csv"'
+    response['Content-Disposition'] = 'attachment; filename="Course Load Format 5.csv"'
     writer = csv.writer(response)
     writer.writerow(['Deptartment', 'PSRN/ID', 'Instructor name', 'Course number', 'Course title', 'L', 'T', 'P', 'Role'])
+    current_month = datetime.datetime.now().month
+    current_sem = 'sem2' if (current_month >= 11 or current_month < 4) else 'sem1'
     instructor_list = None
     if request.user.is_superuser:
-        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True).values_list('instructor', flat=True).distinct())
-        instructor_list_2 = list(Course.objects.filter(enable = True).values_list('ic', flat=True).distinct())
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True).filter(Q(course__sem = 'sem12')|Q(course__sem = current_sem)).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True).filter(Q(sem = 'sem12')|Q(sem = current_sem)).values_list('ic', flat=True).distinct())
         instructor_list = instructor_list_1 + instructor_list_2
         instructor_list = list(set(instructor_list))
     else:
-        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor__department = request.user.userprofile.department).values_list('instructor', flat=True).distinct())
-        instructor_list_2 = list(Course.objects.filter(enable = True, ic__department = request.user.userprofile.department).values_list('ic', flat=True).distinct())
+        instructor_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor__department = request.user.userprofile.department).filter(Q(course__sem = 'sem12')|Q(course__sem = current_sem)).values_list('instructor', flat=True).distinct())
+        instructor_list_2 = list(Course.objects.filter(enable = True, ic__department = request.user.userprofile.department).filter(Q(sem = 'sem12')|Q(sem = current_sem)).values_list('ic', flat=True).distinct())
         instructor_list = instructor_list_1 + instructor_list_2
         instructor_list = list(set(instructor_list))
     instructor_list = Instructor.objects.filter(psrn_or_id__in = instructor_list).order_by('department', 'instructor_type', 'psrn_or_id')
     for instructor in instructor_list:
-        course_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor = instructor).values_list('course', flat=True).distinct())
-        course_list_2 = list(Course.objects.filter(enable = True, ic = instructor).values_list('code', flat=True).distinct())
+        course_list_1 = list(CourseInstructor.objects.filter(course__enable = True, instructor = instructor).filter(Q(course__sem = 'sem12')|Q(course__sem = current_sem)).values_list('course', flat=True).distinct())
+        course_list_2 = list(Course.objects.filter(enable = True, ic = instructor).filter(Q(sem = 'sem12')|Q(sem = current_sem)).values_list('code', flat=True).distinct())
         course_list = course_list_1 + course_list_2
         course_list = list(set(course_list))
         printed_set = set()
