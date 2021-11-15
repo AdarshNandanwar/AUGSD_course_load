@@ -62,7 +62,7 @@ def get_department_elective_list(dept, file):
     for i in range(0, dfe.shape[0]):
         if(dfe['Disc'][i]=='B.E (Electronics & Instrumentation)' or dfe['Disc'][i]=='B.E. (Electrical & Electronics)'):
             Dict[dfe['Disc'][i]]='EEE'
-        if(dfe['Disc'][i]=='B.E. (Computer Science)' or dfe['Disc'][i]=='ME. (Computer Science)'):
+        if(dfe['Disc'][i]=='B.E. (Computer Science)' or dfe['Disc'][i]=='ME. (Computer Science)' or dfe['Disc'][i]=='Minor in Data Science'):
             Dict[dfe['Disc'][i]]='CS'
         if(dfe['Disc'][i]=='ELECTRONICS AND COMMUNICATION ENGINEERING' or dfe['Disc'][i]=='M.E. (Embeded System)'):
             Dict[dfe['Disc'][i]]='EEE'

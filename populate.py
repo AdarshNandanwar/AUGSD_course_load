@@ -99,6 +99,40 @@ def create_course(file):
     print("Creating courses")
     try:
         dept_list = get_department_list()
+        # Electives
+        for i in dept_list:
+            dept = Department.objects.get(code = i)
+            department_elective_list = get_department_elective_list(i, file)
+            for elective in department_elective_list:
+                parent_course = None
+                if elective[3] is not None:
+                    parent_course = Course.objects.filter(code=elective[3]).first()
+                try:
+                    obj, created = Course.objects.update_or_create(
+                        code = elective[0], defaults = {
+                            'name': elective[1], 
+                            'course_type': 'E', 
+                            'department': dept, 
+                            'comcode': elective[2],
+                            'merge_with': parent_course,
+                            'lpu': elective[4]
+                        }
+                    )
+                    if not created:
+                        print('UPDATED: ', elective[0], ' [', elective[1], "] elective is already in db.")
+                    else:
+                        # print('ADDED: ', elective[0], ' [', elective[1], ']')
+                        pass
+                    if elective[3] is not None:
+                        if parent_course is None:
+                            print('NOTFOUND: ', 'Parent course ['+elective[3]+'] of '+elective[1]+' ['+elective[0]+']')
+                        else:
+                            # print('FOUND: ', 'Parent course ['+elective[3]+'] of '+elective[1]+' ['+elective[0]+']')
+                            pass
+                except Exception as e:
+                    print('SKIPPED: ', elective[0], ' [', elective[1], "] ("+str(e)+")")
+                    pass
+        # CDCs
         for i in dept_list:
             dept = Department.objects.get(code = i)
             department_cdc_list = get_department_cdc_list(i, file)
@@ -134,38 +168,6 @@ def create_course(file):
                             pass
                 except Exception as e:
                     print('SKIPPED: ', cdc[0], ' [', cdc[1], "] ("+str(e)+")")
-                    pass
-        for i in dept_list:
-            dept = Department.objects.get(code = i)
-            department_elective_list = get_department_elective_list(i, file)
-            for elective in department_elective_list:
-                parent_course = None
-                if elective[3] is not None:
-                    parent_course = Course.objects.filter(code=elective[3]).first()
-                try:
-                    obj, created = Course.objects.update_or_create(
-                        code = elective[0], defaults = {
-                            'name': elective[1], 
-                            'course_type': 'E', 
-                            'department': dept, 
-                            'comcode': elective[2],
-                            'merge_with': parent_course,
-                            'lpu': elective[4]
-                        }
-                    )
-                    if not created:
-                        print('UPDATED: ', elective[0], ' [', elective[1], "] elective is already in db.")
-                    else:
-                        # print('ADDED: ', elective[0], ' [', elective[1], ']')
-                        pass
-                    if elective[3] is not None:
-                        if parent_course is None:
-                            print('NOTFOUND: ', 'Parent course ['+elective[3]+'] of '+elective[1]+' ['+elective[0]+']')
-                        else:
-                            # print('FOUND: ', 'Parent course ['+elective[3]+'] of '+elective[1]+' ['+elective[0]+']')
-                            pass
-                except Exception as e:
-                    print('SKIPPED: ', elective[0], ' [', elective[1], "] ("+str(e)+")")
                     pass
 
     except Exception as e:
