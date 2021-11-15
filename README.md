@@ -24,6 +24,7 @@ git clone https://github.com/AdarshNandanwar/augsd-course-load.git
     ```bash
     python manage.py makemigrations
     python manage.py migrate
+    python manage.py createsuperuser
     python populate.py
     cd client
     npm install
