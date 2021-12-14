@@ -10,6 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+"""
+Currently, settings for the following are commented out:
+    1. AWS S3 bucket (ref: https://www.youtube.com/watch?v=kt3ZtW9MXhw)
+    2. Whitenoise setup (ref: http://whitenoise.evans.io/en/stable/)
+"""
+
 import os
 import django_heroku
 
@@ -45,14 +51,14 @@ INSTALLED_APPS = [
     'course_load',
     'client',
     'django_cleanup.apps.CleanupConfig',
-    'storages',
+    # 'storages',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -138,7 +144,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 LOGIN_REDIRECT_URL = '/course-load/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login'
@@ -149,6 +155,12 @@ STATICFILES_DIRS = [
 ]
 
 django_heroku.settings(locals())
+
+"""
+# AWS S3 settings
+# ref: https://www.youtube.com/watch?v=kt3ZtW9MXhw
+# Additional dependencies required: botocore, boto3, django-storages
+# Uncomment 'storages' in installed INSTALLED_APPS
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -161,3 +173,4 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_ADDRESSING_STYLE = 'virtual'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+"""

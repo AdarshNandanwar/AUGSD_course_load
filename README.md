@@ -31,7 +31,7 @@ git clone https://github.com/AdarshNandanwar/augsd-course-load.git
     npm run build
     cd ..
     ```
-4. Set up all environment variables
+4. For AWS S3 setup (optional): Set up all environment variables and uncomment the code for boto3 and whitenoise in settings.py.
     ```
     export SECRET_KEY=""
     export DEBUG_VALUE="True"
@@ -43,7 +43,7 @@ git clone https://github.com/AdarshNandanwar/augsd-course-load.git
     Note- Admin panel might not work without properly (Server Error 500) setting up the AWS S3 storage bucket environment variables.
 4. Run the server.
     ```bash
-    python manage.py runserver
+    python manage.py runserver <PORT_NUMBER> --insecure
     ```
 
 ---
