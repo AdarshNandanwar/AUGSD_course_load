@@ -41,10 +41,11 @@ def download_course_wise(request):
             l_count = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'L').count()
             t_count = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'T').count()
             p_count = CourseInstructor.objects.filter(course = course, instructor = ic, section_type = 'P').count()
-            writer.writerow([ic.psrn_or_id, ic.name, '', l_count, t_count, p_count, 'IC'])
+            if ic:
+                writer.writerow([ic.psrn_or_id, ic.name, '', l_count, t_count, p_count, 'IC'])
             instructor_list = CourseInstructor.objects.filter(course = course).values('instructor').distinct().order_by('instructor__instructor_type', 'instructor')
             for instructor in instructor_list:
-                if instructor['instructor'] == ic.psrn_or_id:
+                if ic and instructor['instructor'] == ic.psrn_or_id:
                     continue
                 instructor = Instructor.objects.get(psrn_or_id = instructor['instructor'])
                 l_count = CourseInstructor.objects.filter(course = course, instructor = instructor, section_type = 'L').count()
